@@ -1,0 +1,51 @@
+＜考察＞
+ボトルネックは通信ではないらしい？
+だとしたらノンブロッキング通信はいらない。
+アルゴリズムの改善が必要。
+
+＜考察・感想＞
+通信コストではなく計算コストがボトルネックとなっていることに驚いた。
+これ以上の高速化については、以下のような方法があると思う。
+
+1.精度を犠牲にしないアルゴリズムの改善
+　インラインアセンブリやノンブロッキング通信の利用によって高速化できるが、
+　抜本的な改善は難しいと考えられる。
+2.精度を犠牲にしたアルゴリズムの改善
+　FMMやツリー法などの、遠くの粒子をまとめて計算する方法がある。
+　オーダーレベルの改善であり、粒子数が多いときに有効であるが、結果が若干変化すると思われる。
+　カオス現象が起こる場合、精度による違いが大きくなるという問題がある。
+3.ハードウェアの改善
+　マシン数の増強、スペックの向上など。もしかしたら一番正攻法かもしれない。
+
+＜実行結果(粒子数512)＞
+% mpirun -np 8 ./gmbp
+
+*** Simulation parameters ***
+Number of particles: 512
+Number of time steps: 4000
+Interval of time steps: 0.001
+Data set No.: 3
+
+*** Overall results ***
+# of processes: 8
+Quality index (2-norm) of x: 0.0e+00
+Quality index (2-norm) of v: 0.0e+00
+Verification: Successful
+Elapsed time for simulation: 2.722945 [sec]
+
+＜実行結果（粒子数1024）＞
+% mpirun -np 8 ./gmbp
+
+*** Simulation parameters ***
+Number of particles: 1024
+Number of time steps: 4000
+Interval of time steps: 0.001
+Data set No.: 4
+
+*** Overall results ***
+# of processes: 8
+Quality index (2-norm) of x: 0.0e+00
+Quality index (2-norm) of v: 0.0e+00
+Verification: Successful
+Elapsed time for simulation: 9.928441 [sec]
+
