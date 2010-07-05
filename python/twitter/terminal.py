@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# see http://jspr.tndy.me/2008/05/twitterminal-a-terminal-based-twitter-client-in-python/
 import sys
 from twit import Twitter
 
