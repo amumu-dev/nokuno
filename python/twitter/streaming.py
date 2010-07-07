@@ -1,10 +1,18 @@
-#!/usr/local/bin/python
-# encoding: utf-8
-import sys
-import json
+#!/usr/bin/python
+import sys, tweepy
+from optparse import OptionParser
 
-for line in sys.stdin:
-    if len(line) > 3:
-        twit = json.loads(line)
-        print twit['user']['screen_name'], twit['text']
+class StreamListener(tweepy.StreamListener):
+    def on_data(self, data):
+        print data
 
+def main():
+    parser = OptionParser()
+    parser.add_option("-u", dest="username")
+    parser.add_option("-p", dest="password")
+    (o, a) = parser.parse_args()
+    stream = tweepy.Stream(o.username, o.password, StreamListener())
+    stream.filter(track=['twitter'])
+
+if __name__ == "__main__":
+    main()
