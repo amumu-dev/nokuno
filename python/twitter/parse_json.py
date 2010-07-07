@@ -1,7 +1,6 @@
 #!/usr/local/bin/python
 # encoding: utf-8
-import sys
-import json
+import sys, json
 
 for line in sys.stdin:
     if len(line) > 3:
