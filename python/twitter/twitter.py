@@ -3,14 +3,14 @@ import tweepy, sys
 from optparse import OptionParser
 
 #account
-userename = ""
+username = ""
 password = ""
 
 #parse option
 parser = OptionParser()
 parser.add_option("--username", dest="username", default=username)
 parser.add_option("--password", dest="password", default=password)
-parser.add_option("-c", dest="count", type="int", default=50)
+parser.add_option("-c", dest="count", type="int", default=20)
 parser.add_option("-l", dest="list", help="display list timeline")
 parser.add_option("-u", dest="user", help="display user timeline")
 parser.add_option("-m", dest="mention", action="store_true", help="display mentions")
