@@ -80,13 +80,15 @@ def init(d):
 def normalize(p):
     d = len(p)
     s = sum(p)
-    result = [p[i] / s for i in range(d)]
+    if s != 0.0:
+        result = [p[i] / s for i in range(d)]
+    else:
+        result = [1.0 / d] * d
     for i in range(len(result)):
         if result[i] < 0.00001:
             result[i] = 0
         if result[i] > 0.99999:
             result[i] = 1
-
     return result
 
 def em_algorithm(X):
