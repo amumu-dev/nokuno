@@ -20,7 +20,7 @@ def forward(X, A, pi, mu):
 def backward(X, A, mu):
     l = len(X)
     beta = [[1] * K]    # \beta(z_N) = 1
-    for x in reversed(X):
+    for x in reversed(X[1:]):
         # \beta(z_n) = \sum_{z_{n+1}} \beta(z_{n+1}) p(x_{n+1}|z_{n+1}) p(z_{n+1}|z_n) (13.38)
         beta.insert(0,
             [sum(beta[0][i] * emission(x, i, mu) * A[j][i]
@@ -35,18 +35,16 @@ def likelyhood(X, A, pi, mu):
 def likelyhood2(X, A, pi, mu):
     beta = backward(X, A, mu)
     alpha_0 = [pi[k] * emission(X[0], k, mu) for k in range(K)]
-    print alpha_0
-    print beta[0]
     return sum(alpha_0[k] * beta[0][k] for k in range(K))
 
-def baum_welch(X, A, pi, mu):
+def gamma(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
     beta = backward(X, A, mu)
     return [[alpha[i][j]*beta[i][j]
         for j in range(K)]
         for i in range(len(X))]
 
-def baum_welch2(X, A, pi, mu):
+def xi(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
     beta = backward(X, A, mu)
     L = likelyhood(X, A, pi, mu)
@@ -69,7 +67,9 @@ if __name__ == '__main__':
     print "X:", X
     print "pi:", pi
     print "mu:", mu
-    display(baum_welch(X, A, pi, mu))
+    print 'alpha:', forward(X, A, pi, mu)
+    print 'beta:', backward(X, A, mu)
     print "likelyhood:", likelyhood(X, A, pi, mu)
     print "likelyhood2:", likelyhood2(X, A, pi, mu)
+    print 'gamma:', gamma(X, A, pi, mu)
 
