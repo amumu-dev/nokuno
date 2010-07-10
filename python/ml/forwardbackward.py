@@ -9,7 +9,8 @@ def forward(X, A, pi, mu):
     alpha = [pi]
     for x in X:
         alpha.append(
-            [sum(A[i][j]*alpha[-1][i]
+            [emission(x, j, mu) *
+            sum(A[i][j]*alpha[-1][i]
             for i in range(k))
             for j in range(k)])
     return alpha
