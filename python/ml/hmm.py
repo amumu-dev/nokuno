@@ -75,14 +75,21 @@ def test(X):
 
 def init(d):
     p = [random.random() for i in range(d)]
+    return normalize(p)
+
+def normalize(p):
+    d = len(p)
     s = sum(p)
-    p = [p[i] / s for i in range(d)]
-    return p
+    result = [p[i] / s for i in range(d)]
+    for i in range(len(result)):
+        if result[i] < 0.00001:
+            result[i] = 0
+    return result
 
 def em_algorithm(X):
     # init
-    A = [init(K) for k in range(K)]     # A[i][j] = p(z_n=j|z_{n-1}=i)
     pi = init(K)       # pi[i] = p(z_0=i)
+    A = [init(K) for k in range(K)]     # A[i][j] = p(z_n=j|z_{n-1}=i)
     D = 3
     mu = [init(D) for k in range(K)]    # mu[i][j] = p(x_n=j|z_n=i)
     N = len(X)
@@ -97,13 +104,15 @@ def em_algorithm(X):
         xi = get_xi(X, A, pi, mu)
 
         # M-step
-        gamma_sum = [sum([gamma[n][k] for n in range(N)]) for k in range(K)]
-        pi = [gamma[0][k] / gamma_sum[0] for k in range(K)]
+        pi = normalize([gamma[0][k] for k in range(K)])
         xi_sum = [[ sum([xi[n][j][k] for n in range(N-1)]) for j in range(K)] for k in range(K)]
-        xi_sumsum = [sum([xi_sum[j][k] for k in range(K)]) for j in range(K)]
-        A = [[xi_sum[j][k] / xi_sumsum[j] for j in range(K)] for k in range(K)]
-        mu = [[sum([gamma[n][k] for n in range(N) if X[n] == i]) / gamma_sum[k] for i in range(D)] for k in range(K)] 
+        A = [normalize([xi_sum[j][k] for j in range(K)]) for k in range(K)]
+        mu = [normalize([sum([gamma[n][k] for n in range(N) if X[n] == i]) for i in range(D)]) for k in range(K)] 
         print 'likelyhood:', likelyhood(X, A, pi, mu)
+    
+    print 'pi:', pi
+    print 'A:', A
+    print 'mu:', mu
 
 if __name__ == '__main__':
     #test data
