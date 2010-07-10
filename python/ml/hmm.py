@@ -101,7 +101,7 @@ def em_algorithm(X):
     print 'pi:', pi
     print 'mu:', mu
     print 'likelyhood:', likelyhood(X, A, pi, mu)
-    for loop in range(10):
+    for loop in range(100):
         # E-step
         gamma = get_gamma(X, A, pi, mu)
         xi = get_xi(X, A, pi, mu)
@@ -110,11 +110,13 @@ def em_algorithm(X):
         pi = normalize([gamma[0][k] for k in range(K)])
         A = [normalize([sum([xi[n][j][k] for n in range(N-1)]) for j in range(K)]) for k in range(K)]
         mu = [normalize([sum([gamma[n][k] for n in range(N) if X[n] == i]) for i in range(D)]) for k in range(K)] 
-        print 'likelyhood:', likelyhood(X, A, pi, mu)
+        if loop < 10:
+            print 'likelyhood:', likelyhood(X, A, pi, mu)
     
     print 'pi:', pi
     print 'A:', A
     print 'mu:', mu
+    print 'likelyhood:', likelyhood(X, A, pi, mu)
 
 if __name__ == '__main__':
     #test data
