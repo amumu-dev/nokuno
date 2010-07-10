@@ -19,7 +19,7 @@ def backward(X, A, mu):
     beta = [[1] * k]
     for x in X:
         beta.append(
-            [sum(A[j][i]*beta[-1][j]
+            [sum(A[j][i]*beta[-1][j]*emission(X[i], i, mu)
             for i in range(k))
             for j in range(k)])
     return beta
@@ -30,6 +30,10 @@ def baum_welch(X, A, pi, mu):
     return [[alpha[i][j]*beta[i][j]
         for j in range(k)]
         for i in range(len(X))]
+
+def likelyhood(X, A, pi, mu):
+    alpha = forward(X, A, pi, mu)
+    return sum(alpha[-1])
 
 def display(result):
     for i in range(len(result)):
@@ -47,4 +51,6 @@ if __name__ == '__main__':
     print "mu:", mu
     result = baum_welch(X, A, pi, mu)
     display(result)
+    L = likelyhood(X, A, pi, mu)
+    print "likelyhood:", L
 
