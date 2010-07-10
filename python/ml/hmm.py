@@ -29,6 +29,7 @@ def backward(X, A, mu):
     return beta
 
 def likelyhood(X, A, pi, mu):
+    # (13.42)
     alpha = forward(X, A, pi, mu)
     return sum(alpha[-1])
 
