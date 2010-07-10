@@ -1,4 +1,5 @@
 #!/bin/env python
+import random
 K = 2
 
 def emission(x, z, mu):
@@ -72,14 +73,23 @@ def test(X):
     print 'gamma:', get_gamma(X, A, pi, mu)
     print 'xi:', get_xi(X, A, pi, mu)
 
+def init(d):
+    p = [random.random() for i in range(d)]
+    s = sum(p)
+    p = [p[i] / s for i in range(d)]
+    return p
 
 def em_algorithm(X):
     # init
-    A = [[0.5, 0.5],[0.5, 0.5]]     # A[i][j] = p(z_n=j|z_{n-1}=i)
-    pi = [0.5, 0.5]       # pi[i] = p(z_0=i)
-    mu = [[1, 0, 0],[0, 0.5, 0.5]]  # mu[i][j] = p(x_n=j|z_n=i)
-    D = len(mu[0])
+    A = [init(K) for k in range(K)]     # A[i][j] = p(z_n=j|z_{n-1}=i)
+    pi = init(K)       # pi[i] = p(z_0=i)
+    D = 3
+    mu = [init(D) for k in range(K)]    # mu[i][j] = p(x_n=j|z_n=i)
     N = len(X)
+    print 'X:', X
+    print 'A:', A
+    print 'pi:', pi
+    print 'mu:', mu
     print 'likelyhood:', likelyhood(X, A, pi, mu)
     for loop in range(10):
         # E-step
