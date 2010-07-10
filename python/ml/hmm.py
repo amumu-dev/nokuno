@@ -38,7 +38,7 @@ def likelyhood2(X, A, pi, mu):
     alpha_0 = [pi[k] * emission(X[0], k, mu) for k in range(K)]
     return sum(alpha_0[k] * beta[0][k] for k in range(K))
 
-def gamma(X, A, pi, mu):
+def get_gamma(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
     beta = backward(X, A, mu)
     L = likelyhood(X, A, pi, mu)
@@ -47,7 +47,7 @@ def gamma(X, A, pi, mu):
         for j in range(K)]
         for i in range(len(X))]
 
-def xi(X, A, pi, mu):
+def get_xi(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
     beta = backward(X, A, mu)
     L = likelyhood(X, A, pi, mu)
@@ -57,10 +57,8 @@ def xi(X, A, pi, mu):
         for j in range(K)]
         for i in range(len(X)-1)]
 
-if __name__ == '__main__':
-    #test data
+def test(X):
     A = [[0, 1],[1, 0]]     # A[i][j] = p(z_n=j|z_{n-1}=i)
-    X = [0, 2, 0, 1, 0, 2]  # X[i] = x_i
     pi = [0.75, 0.25]       # pi[i] = p(z_0=i)
     mu = [[1, 0, 0],[0, 0.5, 0.5]]  # mu[i][j] = p(x_n=j|z_n=i)
     print 'A:', A
@@ -71,6 +69,34 @@ if __name__ == '__main__':
     print 'beta:', backward(X, A, mu)
     print 'likelyhood:', likelyhood(X, A, pi, mu)
     print 'likelyhood2:', likelyhood2(X, A, pi, mu)
-    print 'gamma:', gamma(X, A, pi, mu)
-    print 'xi:', xi(X, A, pi, mu)
+    print 'gamma:', get_gamma(X, A, pi, mu)
+    print 'xi:', get_xi(X, A, pi, mu)
+
+
+def em_algorithm(X):
+    # init
+    A = [[0.5, 0.5],[0.5, 0.5]]     # A[i][j] = p(z_n=j|z_{n-1}=i)
+    pi = [0.5, 0.5]       # pi[i] = p(z_0=i)
+    mu = [[1, 0, 0],[0, 0.5, 0.5]]  # mu[i][j] = p(x_n=j|z_n=i)
+    D = len(mu[0])
+    N = len(X)
+    print 'likelyhood:', likelyhood(X, A, pi, mu)
+    for loop in range(10):
+        # E-step
+        gamma = get_gamma(X, A, pi, mu)
+        xi = get_xi(X, A, pi, mu)
+
+        # M-step
+        gamma_sum = [sum([gamma[n][k] for n in range(N)]) for k in range(K)]
+        pi = [gamma[0][k] / gamma_sum[0] for k in range(K)]
+        xi_sum = [[ sum([xi[n][j][k] for n in range(N-1)]) for j in range(K)] for k in range(K)]
+        xi_sumsum = [sum([xi_sum[j][k] for k in range(K)]) for j in range(K)]
+        A = [[xi_sum[j][k] / xi_sumsum[j] for j in range(K)] for k in range(K)]
+        mu = [[sum([gamma[n][k] for n in range(N) if X[n] == i]) / gamma_sum[k] for i in range(D)] for k in range(K)] 
+        print 'likelyhood:', likelyhood(X, A, pi, mu)
+
+if __name__ == '__main__':
+    #test data
+    X = [0, 2, 0, 1, 0, 2]  # X[i] = x_i
+    em_algorithm(X)
 
