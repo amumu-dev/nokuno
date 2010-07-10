@@ -40,7 +40,9 @@ def likelyhood2(X, A, pi, mu):
 def gamma(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
     beta = backward(X, A, mu)
-    return [[alpha[i][j]*beta[i][j]
+    L = likelyhood(X, A, pi, mu)
+    # (13.33)
+    return [[alpha[i][j] * beta[i][j] / L
         for j in range(K)]
         for i in range(len(X))]
 
@@ -48,10 +50,11 @@ def xi(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
     beta = backward(X, A, mu)
     L = likelyhood(X, A, pi, mu)
-    return [[[alpha[i][j]*beta[i+1][h]*A[j][h]*emission(X[i], h, mu)
+    # (13.43)
+    return [[[alpha[i][j] * emission(X[i+1], h, mu) * A[j][h] * beta[i+1][h] / L
         for h in range(K)]
         for j in range(K)]
-        for i in range(len(X))]
+        for i in range(len(X)-1)]
 
 def display(result):
     for i in range(len(result)):
@@ -63,14 +66,14 @@ if __name__ == '__main__':
     X = [0, 2, 0, 1, 0, 2]  # X[i] = x_i
     pi = [0.75, 0.25]       # pi[i] = p(z_0=i)
     mu = [[1, 0, 0],[0, 0.5, 0.5]]  # mu[i][j] = p(x_n=j|z_n=i)
-    mu = [[0.5, 0.5, 0],[0, 0.5, 0.5]]  # mu[i][j] = p(x_n=j|z_n=i)
-    print "A:", A
-    print "X:", X
-    print "pi:", pi
-    print "mu:", mu
+    print 'A:', A
+    print 'X:', X
+    print 'pi:', pi
+    print 'mu:', mu
     print 'alpha:', forward(X, A, pi, mu)
     print 'beta:', backward(X, A, mu)
-    print "likelyhood:", likelyhood(X, A, pi, mu)
-    print "likelyhood2:", likelyhood2(X, A, pi, mu)
+    print 'likelyhood:', likelyhood(X, A, pi, mu)
+    print 'likelyhood2:', likelyhood2(X, A, pi, mu)
     print 'gamma:', gamma(X, A, pi, mu)
+    print 'xi:', xi(X, A, pi, mu)
 
