@@ -57,10 +57,6 @@ def xi(X, A, pi, mu):
         for j in range(K)]
         for i in range(len(X)-1)]
 
-def display(result):
-    for i in range(len(result)):
-        print i, ':', result[i]
-
 if __name__ == '__main__':
     #test data
     A = [[0, 1],[1, 0]]     # A[i][j] = p(z_n=j|z_{n-1}=i)
