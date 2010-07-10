@@ -24,6 +24,10 @@ def backward(X, A, mu):
             for j in range(K)])
     return beta
 
+def likelyhood(X, A, pi, mu):
+    alpha = forward(X, A, pi, mu)
+    return sum(alpha[-1])
+
 def baum_welch(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
     beta = backward(X, A, mu)
@@ -31,9 +35,14 @@ def baum_welch(X, A, pi, mu):
         for j in range(K)]
         for i in range(len(X))]
 
-def likelyhood(X, A, pi, mu):
+def baum_welch2(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
-    return sum(alpha[-1])
+    beta = backward(X, A, mu)
+    L = likelyhood(X, A, pi, mu)
+    return [[[alpha[i][j]*beta[i+1][h]*A[j][h]*emission(X[i], h, mu)
+        for h in range(K)]
+        for j in range(K)]
+        for i in range(len(X))]
 
 def display(result):
     for i in range(len(result)):
@@ -50,6 +59,7 @@ if __name__ == '__main__':
     print "pi:", pi
     print "mu:", mu
     result = baum_welch(X, A, pi, mu)
+    result = baum_welch2(X, A, pi, mu)
     display(result)
     L = likelyhood(X, A, pi, mu)
     print "likelyhood:", L
