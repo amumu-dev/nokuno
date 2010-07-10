@@ -63,6 +63,7 @@ if __name__ == '__main__':
     X = [0, 2, 0, 1, 0, 2]  # X[i] = x_i
     pi = [0.75, 0.25]       # pi[i] = p(z_0=i)
     mu = [[1, 0, 0],[0, 0.5, 0.5]]  # mu[i][j] = p(x_n=j|z_n=i)
+    mu = [[0.5, 0.5, 0],[0, 0.5, 0.5]]  # mu[i][j] = p(x_n=j|z_n=i)
     print "A:", A
     print "X:", X
     print "pi:", pi
