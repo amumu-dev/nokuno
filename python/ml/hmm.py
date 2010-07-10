@@ -84,6 +84,9 @@ def normalize(p):
     for i in range(len(result)):
         if result[i] < 0.00001:
             result[i] = 0
+        if result[i] > 0.99999:
+            result[i] = 1
+
     return result
 
 def em_algorithm(X):
@@ -105,8 +108,7 @@ def em_algorithm(X):
 
         # M-step
         pi = normalize([gamma[0][k] for k in range(K)])
-        xi_sum = [[ sum([xi[n][j][k] for n in range(N-1)]) for j in range(K)] for k in range(K)]
-        A = [normalize([xi_sum[j][k] for j in range(K)]) for k in range(K)]
+        A = [normalize([sum([xi[n][j][k] for n in range(N-1)]) for j in range(K)]) for k in range(K)]
         mu = [normalize([sum([gamma[n][k] for n in range(N) if X[n] == i]) for i in range(D)]) for k in range(K)] 
         print 'likelyhood:', likelyhood(X, A, pi, mu)
     
