@@ -10,8 +10,9 @@ RPROMPT=''
 
 # Alias
 alias ls='ls -F --color=auto'
-alias ll='ls -lhF'
-alias la='ls -alhF'
+alias ll='ls -lh'
+alias la='ls -lha'
+alias lt='ls -lht'
 alias sort='LC_ALL=C sort -S 1000000'
 alias mecab='mecab -b 1000000'
 
@@ -45,7 +46,7 @@ setopt hist_ignore_dups
 setopt hist_save_no_dups
 
 # Path
-path=($HOME/install/bin(N) $path)
+path=($HOME/bin(N) $path)
 typeset -U path
 
 # SVN
