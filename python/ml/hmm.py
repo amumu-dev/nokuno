@@ -37,7 +37,7 @@ def likelyhood(X, A, pi, mu):
 def forward_backward(X, A, pi, mu):
     alpha = forward(X, A, pi, mu)
     beta = backward(X, A, mu)
-    L = likelyhood(X, A, pi, mu)
+    L = sum(alpha[-1])
 
     # (13.33)
     gamma = [[alpha[i][j] * beta[i][j] / L
@@ -83,9 +83,16 @@ def em_algorithm(X):
         (gamma, xi, L) = forward_backward(X, A, pi, mu)
 
         # M-step
+        # (13.18)
         pi = normalize([gamma[0][k] for k in range(K)])
-        A = [normalize([sum([xi[n][j][k] for n in range(N-1)]) for j in range(K)]) for k in range(K)]
-        mu = [normalize([sum([gamma[n][k] for n in range(N) if X[n] == i]) for i in range(D)]) for k in range(K)] 
+        # (13.19)
+        A = [normalize([sum([xi[n][j][k] for n in range(N-1)])
+            for j in range(K)])
+            for k in range(K)]
+        # (13.23)
+        mu = [normalize([sum([gamma[n][k] for n in range(N) if X[n] == i])
+            for i in range(D)])
+            for k in range(K)] 
         print 'likelyhood:', L
     
     print 'likelyhood:', likelyhood(X, A, pi, mu)
