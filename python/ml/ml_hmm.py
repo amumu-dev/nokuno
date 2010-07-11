@@ -12,56 +12,56 @@
 from numpy import *
 
 def HMMfwd(a,b,obs):
-	nStates = shape(b)[0]
-	T = shape(obs)[0]
-	alpha = zeros((nStates,T))
-	alpha[:,0] = aFirst*b[:,obs[0]]
-	for t in range(1,T):
-		for s in range(nStates):
-			alpha[s,t] = b[s,obs[t]] * sum(alpha[:,t-1] * a[:,s])
-	return alpha
+    nStates = shape(b)[0]
+    T = shape(obs)[0]
+    alpha = zeros((nStates,T))
+    alpha[:,0] = aFirst*b[:,obs[0]]
+    for t in range(1,T):
+        for s in range(nStates):
+            alpha[s,t] = b[s,obs[t]] * sum(alpha[:,t-1] * a[:,s])
+    return alpha
 
 def HMMbwd(a,b,obs):
-	nStates = shape(b)[0]
-	T = shape(obs)[0]
-	beta = zeros((nStates,T))
-	beta[:,T-1] = aLast
-	for t in range(T-2,0,-1):
-		for s in range(nStates):
-			beta[s,t] = b[s,obs[t+1]] * sum(beta[:,t+1] * a[:,s])
-	beta[:,0] = b[:,obs[0]] * sum(beta[:,1] * aFirst)
-	return beta
+    nStates = shape(b)[0]
+    T = shape(obs)[0]
+    beta = zeros((nStates,T))
+    beta[:,T-1] = aLast
+    for t in range(T-2,0,-1):
+        for s in range(nStates):
+            beta[s,t] = b[s,obs[t+1]] * sum(beta[:,t+1] * a[:,s])
+    beta[:,0] = b[:,obs[0]] * sum(beta[:,1] * aFirst)
+    return beta
 
 def BaumWelch(obs,nStates):
-	T = shape(obs)[0]
-	a = random.rand(nStates,nStates)
-	b = random.rand(nStates,T)
-	olda = zeros((nStates,nStates)) 
-	oldb = zeros((nStates,T)) 
-	maxCount = 50
-	tolerance = 1e-5
-	count = 0
-	while (abs(a-olda)).max() > tolerance and (abs(b-oldb)).max() > tolerance and count < maxCount:
-		# E-step
-		alpha = HMMfwd(a,b,obs)
-		beta = HMMbwd(a,b,obs)
-		gamma = zeros((nStates,nStates,T))
-		for t in range(T-1):
-			for s in range(nStates):
-				gamma[:,s,t] = alpha[:,t] * a[:,s] * b[s,obs[t+1]] * beta[s,t+1] / max(alpha[:,T-1])
-		# M-step
-		olda = a.copy()
-		oldb = b.copy()
-		for i in range(nStates):
-			for j in range(nStates):
-				a[i,j] = sum(gamma[i,j,:])/sum(sum(gamma[i,:,:]))
-		for o in range(max(obs)):
-			for j in range(nStates):
-				places = (obs==o).nonzero()
-				tally = sum(gamma[j,:,:],axis=0)
-				b[j,o] = sum(tally[places])/sum(sum(gamma[j,:,:]))
-		count += 1
-	return a,b
+    T = shape(obs)[0]
+    a = random.rand(nStates,nStates)
+    b = random.rand(nStates,T)
+    olda = zeros((nStates,nStates)) 
+    oldb = zeros((nStates,T)) 
+    maxCount = 50
+    tolerance = 1e-5
+    count = 0
+    while (abs(a-olda)).max() > tolerance and (abs(b-oldb)).max() > tolerance and count < maxCount:
+        # E-step
+        alpha = HMMfwd(a,b,obs)
+        beta = HMMbwd(a,b,obs)
+        gamma = zeros((nStates,nStates,T))
+        for t in range(T-1):
+            for s in range(nStates):
+                gamma[:,s,t] = alpha[:,t] * a[:,s] * b[s,obs[t+1]] * beta[s,t+1] / max(alpha[:,T-1])
+        # M-step
+        olda = a.copy()
+        oldb = b.copy()
+        for i in range(nStates):
+            for j in range(nStates):
+                a[i,j] = sum(gamma[i,j,:])/sum(sum(gamma[i,:,:]))
+        for o in range(max(obs)):
+            for j in range(nStates):
+                places = (obs==o).nonzero()
+                tally = sum(gamma[j,:,:],axis=0)
+                b[j,o] = sum(tally[places])/sum(sum(gamma[j,:,:]))
+        count += 1
+    return a,b
 
 if __name__ == '__main__':
     aFirst = array([0.25,0.25,0.25,0.25])
