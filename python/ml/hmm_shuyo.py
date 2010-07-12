@@ -101,7 +101,10 @@ class HMM(object):
     def dump_emission(self):
         print "Emission"
         for i, x in enumerate(self.B):
-            print self.vocas[i], ":", ', '.join(["%.4f" % y for y in x])
+            #print self.vocas[i], ":", ', '.join(["%.4f" % y for y in x])
+            m = max(x)
+            print zip(range(self.K), x)
+            print self.vocas[i], ":", 
 
     def Estep(self, x):
         N = len(x)
