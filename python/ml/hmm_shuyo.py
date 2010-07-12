@@ -11,7 +11,10 @@ from numpy.random import dirichlet, randn
 
 def load_corpus(filename):
     corpus = []
-    f = open(filename, 'r')
+    if filename == '-':
+        f = sys.stdin
+    else:
+        f = open(filename, 'r')
     for line in f:
         #doc = re.findall(r'\w+(?:-\w+)?(?:\'\w+)?',line)
         doc = line.strip().split(' ')
@@ -175,7 +178,7 @@ class HMM(object):
 
 def main():
     parser = OptionParser()
-    parser.add_option("-f", dest="filename", help="corpus filename")
+    parser.add_option("-f", dest="filename", help="corpus filename", default="-")
     parser.add_option("-k", dest="K", type="int", help="number of latent states", default=6)
     parser.add_option("-a", dest="a", type="float", help="Dirichlet parameter", default=1.0)
     parser.add_option("-i", dest="I", type="int", help="iteration count", default=10)
