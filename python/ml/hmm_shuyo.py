@@ -101,10 +101,20 @@ class HMM(object):
     def dump_emission(self):
         print "Emission"
         for i, x in enumerate(self.B):
-            #print self.vocas[i], ":", ', '.join(["%.4f" % y for y in x])
-            m = max(x)
-            print zip(range(self.K), x)
-            print self.vocas[i], ":", 
+            c = sorted( zip(x,range(self.K)))[0][1]
+            print self.vocas[i], ":", c
+
+    def dump_class(self):
+        print "Class"
+        result = [[]] * self.K
+        for i, x in enumerate(self.B):
+            r = sorted( zip(x,range(self.K)))[0]
+            item = (r[0], i)
+            result[r[1]].append(item)
+        for c in range(self.K):
+            r = sorted(result[c])
+            for s in r:
+                print self.vocas[s[1]]
 
     def Estep(self, x):
         N = len(x)
@@ -193,7 +203,8 @@ def main():
     parser.add_option("-t", dest="triangle", action="store_true", help="triangle")
     parser.add_option("-d", dest="dump", action="store_true", help="dump")
     parser.add_option("-s", dest="sampling", type="int", help="sampling number", default=0)
-    parser.add_option("-e", dest="emission", action="store_true", help="display emission")
+    parser.add_option("-e", dest="emission", action="store_true")
+    parser.add_option("-c", dest="c", action="store_true")
     (options, args) = parser.parse_args()
     if not options.filename: parser.error("need corpus filename(-f)")
 
@@ -214,6 +225,9 @@ def main():
 
     if options.emission == True:
         hmm.dump_emission()
+
+    if options.c == True:
+        hmm.dump_class()
 
     if options.sampling > 0:
         for i in range(options.sampling):
