@@ -98,6 +98,11 @@ class HMM(object):
         for i, x in enumerate(self.B):
             print i, ":", ', '.join(["%.4f" % y for y in x])
 
+    def dump_emission(self):
+        print "Emission"
+        for i, x in enumerate(self.B):
+            print self.vocas[i], ":", ', '.join(["%.4f" % y for y in x])
+
     def Estep(self, x):
         N = len(x)
 
@@ -183,6 +188,9 @@ def main():
     parser.add_option("-a", dest="a", type="float", help="Dirichlet parameter", default=1.0)
     parser.add_option("-i", dest="I", type="int", help="iteration count", default=10)
     parser.add_option("-t", dest="triangle", action="store_true", help="triangle")
+    parser.add_option("-d", dest="dump", action="store_true", help="dump")
+    parser.add_option("-s", dest="sampling", type="int", help="sampling number", default=0)
+    parser.add_option("-e", dest="emission", action="store_true", help="display emission")
     (options, args) = parser.parse_args()
     if not options.filename: parser.error("need corpus filename(-f)")
 
@@ -197,10 +205,16 @@ def main():
         print i, ":", log_likelihood
         if pre_L > log_likelihood: break
         pre_L = log_likelihood
-    #hmm.dump()
 
-    #for i in range(10):
-        #print " ".join(hmm.sampling())
+    if options.dump == True:
+        hmm.dump()
+
+    if options.emission == True:
+        hmm.dump_emission()
+
+    if options.sampling > 0:
+        for i in range(options.sampling):
+            print " ".join(hmm.sampling())
 
     for x in corpus:
         result = zip(x, hmm.Viterbi(hmm.words2id(x)))
