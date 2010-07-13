@@ -104,17 +104,21 @@ class HMM(object):
             c = sorted( zip(x,range(self.K)))[0][1]
             print self.vocas[i], ":", c
 
-    def dump_class(self):
+    def dump_label(self):
         print "Class"
-        result = [[]] * self.K
+        result = [None] * self.K
+        for i in range(self.K):
+            result[i] = []
         for i, x in enumerate(self.B):
             r = sorted( zip(x,range(self.K)))[0]
             item = (r[0], i)
             result[r[1]].append(item)
         for c in range(self.K):
             r = sorted(result[c])
+            print "class ", c, ":",
             for s in r:
-                print self.vocas[s[1]]
+                print self.vocas[s[1]], 
+            print
 
     def Estep(self, x):
         N = len(x)
@@ -204,7 +208,8 @@ def main():
     parser.add_option("-d", dest="dump", action="store_true", help="dump")
     parser.add_option("-s", dest="sampling", type="int", help="sampling number", default=0)
     parser.add_option("-e", dest="emission", action="store_true")
-    parser.add_option("-c", dest="c", action="store_true")
+    parser.add_option("-l", dest="label", action="store_true")
+    parser.add_option("-v", dest="viterbi", action="store_true")
     (options, args) = parser.parse_args()
     if not options.filename: parser.error("need corpus filename(-f)")
 
@@ -226,18 +231,19 @@ def main():
     if options.emission == True:
         hmm.dump_emission()
 
-    if options.c == True:
-        hmm.dump_class()
+    if options.label == True:
+        hmm.dump_label()
 
     if options.sampling > 0:
         for i in range(options.sampling):
             print " ".join(hmm.sampling())
 
-    for x in corpus:
-        result = zip(x, hmm.Viterbi(hmm.words2id(x)))
-        for word, state in result:
-            print word + '/' + str(state) + '\t',
-        print
+    if options.viterbi == True:
+        for x in corpus:
+            result = zip(x, hmm.Viterbi(hmm.words2id(x)))
+            for word, state in result:
+                print word + '/' + str(state) + '\t',
+            print
 
 
 if __name__ == "__main__":
