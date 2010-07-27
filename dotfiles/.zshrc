@@ -3,6 +3,11 @@ if [ -f /etc/zshrc ]; then
     . /etc/zshrc
 fi
 
+# auto screen
+if [ $SHLVL = 1 ];then
+    screen -xR
+fi
+
 # Prompt
 PROMPT="[%m %~] $ "
 PROMPT2='> '
