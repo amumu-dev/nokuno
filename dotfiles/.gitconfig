@@ -2,4 +2,4 @@
 name = nokuno
 email = nokuno@nokuno.jp
 [core]
-excludesfile = /home/yookuno/.gitexcludes
+excludesfile = /home/nokuno/.gitexcludes
