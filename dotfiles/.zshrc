@@ -33,6 +33,7 @@ setopt list_packed
 setopt nolistbeep
 setopt no_beep
 setopt pushd_ignore_dups
+setopt extended_glob
 
 # key bind
 bindkey -e
@@ -51,7 +52,7 @@ setopt hist_ignore_dups
 setopt hist_save_no_dups
 
 # Path
-path=($HOME/bin(N) $path)
+path=($HOME/bin(N) $HOME/nokuno/python/*(N) $path)
 typeset -U path
 
 # SVN
