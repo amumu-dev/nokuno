@@ -31,7 +31,7 @@ for line in sys.stdin:
                 total = sum([bag_of_words.setdefault(topic,0) for topic in topic_words])
                 if total > o.threshold:
                     prob = [str(float(bag_of_words.setdefault(topic,0)) / float(total)) for topic in topic_words]
-                    print ",".join(prob)
+                    print title + "\t" + "\t".join(prob)
                     
         title = "".join(words[1:-1])
         bag_of_words = {}
