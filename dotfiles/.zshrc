@@ -3,11 +3,6 @@ if [ -f /etc/zshrc ]; then
     . /etc/zshrc
 fi
 
-# auto screen
-if [ $SHLVL = 1 ];then
-    screen -xR
-fi
-
 # Prompt
 PROMPT="[%m %~] $ "
 PROMPT2='> '
@@ -33,7 +28,6 @@ setopt list_packed
 setopt nolistbeep
 setopt no_beep
 setopt pushd_ignore_dups
-setopt extended_glob
 
 # key bind
 bindkey -e
