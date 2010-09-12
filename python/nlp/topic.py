@@ -29,7 +29,7 @@ for line in sys.stdin:
             # print topic probability
             else:
                 total = sum([bag_of_words.setdefault(topic,0) for topic in topic_words])
-                if total > 0:
+                if total > o.threshold:
                     prob = [str(float(bag_of_words.setdefault(topic,0)) / float(total)) for topic in topic_words]
                     print ",".join(prob)
                     
