@@ -1,17 +1,30 @@
 #!/usr/bin/python
 #encoding: utf-8
 import sys
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option("-t", dest="threshold", type="int", default=0)
+(o, args) = parser.parse_args()
 
 title = ""
-current = []
+bag_of_words = {}
 for line in sys.stdin:
     words = line.strip().split(" ")
     if len(words) == 0:
         continue
     elif words[0] == "[[" and words[-1] == "]]":
         if title != "":
-            print title + "\t" + " ".join(current)
+            bow = bag_of_words.items()
+            bow = sorted(bow, key=lambda x:x[1])
+            print title + "\t",
+            for (key, value) in bow:
+                if value > o.threshold:
+                    print key + ":" + str(value) + " ",
+            print
         title = "".join(words[1:-1])
-        current = []
+        bag_of_words = {}
     else:
-        current.extend(words)
+        for word in words:
+            count = bag_of_words.setdefault(word, 0)
+            bag_of_words[word] = count+1
