@@ -9,6 +9,9 @@ parser.add_option("-w", dest="words", default="政治,スポーツ,経済")
 (o, args) = parser.parse_args()
 topic_words = o.words.split(",")
 
+if o.words != "":
+    print "タイトル\t" + "\t".join(topic_words)
+
 title = ""
 bag_of_words = {}
 for line in sys.stdin:
