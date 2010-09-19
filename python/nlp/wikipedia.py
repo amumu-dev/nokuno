@@ -16,7 +16,7 @@ for line in sys.stdin:
     elif words[0] == "[[" and words[-1] == "]]":
         if title != "":
             bow = bag_of_words.items()
-            bow = sorted(bow, key=lambda x:x[1])
+            bow = sorted(bow, key=lambda x:-x[1])
             print title + "\t",
             for (key, value) in bow:
                 if value > o.threshold:
