@@ -16,9 +16,9 @@ for line in open(o.dictionary):
     (yomi, word, pos, prob) = line.strip().split(o.separator, 3)
     prob = float(prob)
     if not yomi in dictionary:
-        dictionary[yomi] = [(word, prob, prob)]
+        dictionary[yomi] = [(word, pos, prob)]
     else:
-        dictionary[yomi].append((word, prob, prob))
+        dictionary[yomi].append((word, pos, prob))
 #print format(dictionary.items()[:10])
 
 #load connection
