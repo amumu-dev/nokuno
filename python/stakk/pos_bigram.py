@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #encoding: utf-8
-import sys
+from sys import stdin
+from copy import copy
 from optparse import OptionParser
 from format import format
 
@@ -31,7 +32,7 @@ for line in open(o.connection):
 #print format(connection)
 
 #input from stdin
-for line in sys.stdin:
+for line in stdin:
     input = line.strip()
     length = len(input)
 
@@ -44,8 +45,7 @@ for line in sys.stdin:
             yomi = input[i:j]
             if yomi in dictionary:
                 for item in dictionary[yomi]:
-                    #TODO: 'clone' item for dupulication
-                    lattice[j].append(item)
+                    lattice[j].append(copy(item))
     #print format(lattice)
 
     #forward search
