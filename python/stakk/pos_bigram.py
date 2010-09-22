@@ -31,7 +31,8 @@ for key,value in dic_yomi_word.items():
         prob = freq / dic_word[word]
         value[i] = (word, prob)
 
-print format(dic_yomi_word.items()[:10])
+#print format(dic_yomi_word.items()[:10])
+dic_
 
 #input from stdin
 for line in sys.stdin:
