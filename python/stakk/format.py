@@ -14,6 +14,8 @@ def format(x):
         result = "{"
         result += ', '.join(format(k)+": "+format(v) for k,v in x.items())
         result += "}"
+    elif type(x) == str:
+        result = "'" + str(x) + "'"
     else:
         result = str(x)
     return result
