@@ -1,10 +1,10 @@
-#!/bin/env python
+#!/usr/bin/env python
 #encoding: utf-8
 import sys
 from optparse import OptionParser
 
 parser = OptionParser()
-parser.add_option("-f", dest="file", default="data/yomi-unigram.txt")
+parser.add_option("-f", dest="file", default="data/yomi_word_unigram.txt")
 (o, args) = parser.parse_args()
 
 #load dictionary
