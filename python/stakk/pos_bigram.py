@@ -16,9 +16,9 @@ for line in open(o.dictionary):
     (yomi, word, pos, prob) = line.strip().split(o.separator, 3)
     prob = float(prob)
     if not yomi in dictionary:
-        dictionary[yomi] = [(word, pos, prob)]
+        dictionary[yomi] = [[yomi, word, pos, prob]]
     else:
-        dictionary[yomi].append((word, pos, prob))
+        dictionary[yomi].append([yomi, word, pos, prob])
 #print format(dictionary.items()[:10])
 
 #load connection
@@ -36,18 +36,34 @@ for line in sys.stdin:
     length = len(input)
 
     #create lattice
-    lattice = [[] for i in range(length+1)]
-    lattice[0].append(('<S>', '<S>', '<S>', 1.0))
+    lattice = [[] for i in range(length+2)]
+    lattice[0].append(['', '<S>', 'その他', 1.0])
+    lattice[-1].append(['', '</S>', 'その他', 1.0])
     for i in range(length):
         for j in range(i+1, length+1):
             yomi = input[i:j]
             if yomi in dictionary:
                 for item in dictionary[yomi]:
                     lattice[j].append(item)
-
     #print format(lattice)
-    #forward search
 
+    #forward search
+    for i in range(1, length+2):
+        for right in lattice[i]:
+            (yomi, word, pos, prob) = right
+            j = i - len(yomi)
+            def func(x):
+                k = x[2]+"_"+pos
+                if k in connection:
+                    return x[3]*connection[k]
+                else:
+                    return 0.0
+            best = max(lattice[j], key=func)
+            right[3] = best[3] * func(best)
+
+    for node in lattice: print format(node)
+
+"""
     #back trace
     i = length
     result = ""
@@ -56,4 +72,4 @@ for line in sys.stdin:
         result = word[0] + " " + result
         i -= len(word[1])
     print result
-
+"""
