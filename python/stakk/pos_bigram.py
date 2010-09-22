@@ -36,16 +36,18 @@ for line in sys.stdin:
     length = len(input)
 
     #create lattice
-    lattice = [None] * (length+1)
-    lattice[0] = [('<S>', '<S>', '<S>', 1.0)]
+    lattice = [[] for i in range(length+1)]
+    lattice[0].append(('<S>', '<S>', '<S>', 1.0))
     for i in range(length):
         for j in range(i+1, length+1):
             yomi = input[i:j]
-            if yomi in yomi_word and lattice[i] != None:
-                (surf, prob) = yomi_word[yomi]
-                prob = lattice[i][2] * prob / summation
-                if lattice[j] == None or lattice[j][1] < prob:
-                    lattice[j] = (surf, yomi, prob)
+            if yomi in dictionary:
+                for item in dictionary[yomi]:
+                    lattice[j].append(item)
+
+    #print format(lattice)
+    #forward search
+
     #back trace
     i = length
     result = ""
