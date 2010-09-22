@@ -60,6 +60,7 @@ for line in sys.stdin:
                     return 0.0
             best = max(lattice[j], key=func)
             right[3] = best[3] * func(best)
+            right.append(best)
 
     for node in lattice: print format(node)
 
