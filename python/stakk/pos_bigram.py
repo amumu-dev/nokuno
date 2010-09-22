@@ -38,12 +38,13 @@ for line in sys.stdin:
     #create lattice
     lattice = [[] for i in range(length+2)]
     lattice[0].append(['<S>', '<S>', 'その他', 1.0, None])
-    lattice[-1].append(['</S>', '</S>', 'その他', 1.0])
+    lattice[-1].append([' ', '</S>', 'その他', 1.0])
     for i in range(length):
         for j in range(i+1, length+1):
             yomi = input[i:j]
             if yomi in dictionary:
                 for item in dictionary[yomi]:
+                    #TODO: 'clone' item for dupulication
                     lattice[j].append(item)
     #print format(lattice)
 
