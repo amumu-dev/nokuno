@@ -5,40 +5,30 @@ from optparse import OptionParser
 from format import format
 
 parser = OptionParser()
-parser.add_option("-y", dest="yomi", default="data/word_yomi_unigram.txt")
-parser.add_option("-w", dest="word", default="data/pos_word_unigram.txt")
-parser.add_option("-p", dest="pos", default="data/pos_bigram.txt")
+parser.add_option("-d", dest="dictionary", default="data/dictionary.txt")
+parser.add_option("-c", dest="connection", default="data/connection.txt")
 parser.add_option("-s", dest="separator", default="\t")
 (o, args) = parser.parse_args()
 
 #load dictionary
-yomi2word = {}
-for line in open(o.yomi):
-    (word, yomi, prob) = line.strip().split(o.separator, 2)
+dictionary = {}
+for line in open(o.dictionary):
+    (yomi, word, pos, prob) = line.strip().split(o.separator, 3)
     prob = float(prob)
-    if not yomi in yomi2word:
-        yomi2word[yomi] = [(word, prob)]
+    if not yomi in dictionary:
+        dictionary[yomi] = [(word, prob, prob)]
     else:
-        yomi2word[yomi].append((word, prob))
-#print format(yomi2word.items()[:10])
+        dictionary[yomi].append((word, prob, prob))
+#print format(dictionary.items()[:10])
 
-word2pos = {}
-for line in open(o.word):
-    (pos, word, prob) = line.strip().split(o.separator, 2)
-    prob = float(prob)
-    if not word in word2pos:
-        word2pos[word] = [(pos, prob)]
-    else:
-        word2pos[word].append((pos, prob))
-#print format(word2pos.items()[:10])
-
-pos2pos = {}
-for line in open(o.pos):
+#load connection
+connection = {}
+for line in open(o.connection):
     (left, right, prob) = line.strip().split(o.separator, 2)
     prob = float(prob)
     key = left + "_" + right
-    pos2pos[key] = prob
-#print format(pos2pos)
+    connection[key] = prob
+#print format(connection)
 
 #input from stdin
 for line in sys.stdin:
@@ -47,7 +37,7 @@ for line in sys.stdin:
 
     #create lattice
     lattice = [None] * (length+1)
-    lattice[0] = ('<S>', '', 1.0)
+    lattice[0] = [('<S>', '<S>', '<S>', 1.0)]
     for i in range(length):
         for j in range(i+1, length+1):
             yomi = input[i:j]
@@ -64,3 +54,4 @@ for line in sys.stdin:
         result = word[0] + " " + result
         i -= len(word[1])
     print result
+
