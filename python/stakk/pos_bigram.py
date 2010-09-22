@@ -37,8 +37,8 @@ for line in sys.stdin:
 
     #create lattice
     lattice = [[] for i in range(length+2)]
-    lattice[0].append(['', '<S>', 'その他', 1.0])
-    lattice[-1].append(['', '</S>', 'その他', 1.0])
+    lattice[0].append(['<S>', '<S>', 'その他', 1.0, None])
+    lattice[-1].append(['</S>', '</S>', 'その他', 1.0])
     for i in range(length):
         for j in range(i+1, length+1):
             yomi = input[i:j]
@@ -52,6 +52,8 @@ for line in sys.stdin:
         for right in lattice[i]:
             (yomi, word, pos, prob) = right
             j = i - len(yomi)
+            if len(lattice[j]) == 0:
+                break
             def func(x):
                 k = x[2]+"_"+pos
                 if k in connection:
@@ -64,13 +66,11 @@ for line in sys.stdin:
 
     for node in lattice: print format(node)
 
-"""
     #back trace
-    i = length
+    current = lattice[-1][0]
     result = ""
-    while i > 0 and lattice[i] != None:
-        word = lattice[i]
-        result = word[0] + " " + result
-        i -= len(word[1])
+    while current != None:
+        result = current[1] + " " + result
+        current = current[4]
     print result
-"""
+
