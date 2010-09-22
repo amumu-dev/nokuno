@@ -5,34 +5,40 @@ from optparse import OptionParser
 from format import format
 
 parser = OptionParser()
-parser.add_option("-y", dest="yomi", default="data/yomi_word_unigram.txt")
-parser.add_option("-w", dest="word", default="data/word_pos_unigram.txt")
+parser.add_option("-y", dest="yomi", default="data/word_yomi_unigram.txt")
+parser.add_option("-w", dest="word", default="data/pos_word_unigram.txt")
 parser.add_option("-p", dest="pos", default="data/pos_bigram.txt")
+parser.add_option("-s", dest="separator", default="\t")
 (o, args) = parser.parse_args()
 
 #load dictionary
-dic_yomi_word = {}
-dic_word = {}
+yomi2word = {}
 for line in open(o.yomi):
-    (yomi, word, freq) = line.strip().split("\t", 2)
-    freq = float(freq)
-    if not yomi in dic_yomi_word:
-        dic_yomi_word[yomi] = [(word, freq)]
+    (word, yomi, prob) = line.strip().split(o.separator, 2)
+    prob = float(prob)
+    if not yomi in yomi2word:
+        yomi2word[yomi] = [(word, prob)]
     else:
-        dic_yomi_word[yomi].append((word,freq))
-    if not word in dic_word:
-        dic_word[word] = freq
+        yomi2word[yomi].append((word, prob))
+#print format(yomi2word.items()[:10])
+
+word2pos = {}
+for line in open(o.word):
+    (pos, word, prob) = line.strip().split(o.separator, 2)
+    prob = float(prob)
+    if not word in word2pos:
+        word2pos[word] = [(pos, prob)]
     else:
-        dic_word[word] += freq
+        word2pos[word].append((pos, prob))
+#print format(word2pos.items()[:10])
 
-for key,value in dic_yomi_word.items():
-    for i in range(len(value)):
-        word, freq = value[i]
-        prob = freq / dic_word[word]
-        value[i] = (word, prob)
-
-#print format(dic_yomi_word.items()[:10])
-dic_
+pos2pos = {}
+for line in open(o.pos):
+    (left, right, prob) = line.strip().split(o.separator, 2)
+    prob = float(prob)
+    key = left + "_" + right
+    pos2pos[key] = prob
+#print format(pos2pos)
 
 #input from stdin
 for line in sys.stdin:
@@ -46,8 +52,8 @@ for line in sys.stdin:
         for j in range(i+1, length+1):
             yomi = input[i:j]
             if yomi in yomi_word and lattice[i] != None:
-                (surf, freq) = yomi_word[yomi]
-                prob = lattice[i][2] * freq / summation
+                (surf, prob) = yomi_word[yomi]
+                prob = lattice[i][2] * prob / summation
                 if lattice[j] == None or lattice[j][1] < prob:
                     lattice[j] = (surf, yomi, prob)
     #back trace
