@@ -16,6 +16,8 @@ def format(x):
         result += "}"
     elif type(x) == str:
         result = "'" + str(x) + "'"
+    elif type(x) == float:
+        result = "%.2e" % (x)
     else:
         result = str(x)
     return result
