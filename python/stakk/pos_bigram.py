@@ -23,7 +23,7 @@ class Node:
         self.total = total
         self.back = back
     def __str__(self):
-        return format((self.yomi, self.word, self.pos, self.prob, self.total,self.back))
+        return format((self.yomi, self.word, self.pos, self.prob, self.total,self.index,self.back))
 
 #load dictionary
 dictionary = {}
