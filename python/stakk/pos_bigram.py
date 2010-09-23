@@ -79,7 +79,7 @@ for line in stdin:
     while current > 0:
         node = lattice[current][position]
         result = node.word + " " + result
-        position = node.index
+        position = node.back
         current -= len(node.yomi)
     print result
 
