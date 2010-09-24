@@ -30,7 +30,7 @@ function peekQuery () {
     if (query == "") {
         result.style.display = "none";
     } else if (oldquery != query) {
-        xmlhttp.open("GET", "/stakk?query=" + query, true);
+        xmlhttp.open("GET", "/api?query=" + query, true);
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 result.style.display = "block";
