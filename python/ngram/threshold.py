@@ -5,7 +5,7 @@ from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option("-t", dest="threshold", type="int", default=10)
-parser.add_option("-s", dest="separator", default=" ")
+parser.add_option("-s", dest="separator", default="\t")
 parser.add_option("-c", dest="column", type="int", default=-1)
 (options, args) = parser.parse_args()
 
