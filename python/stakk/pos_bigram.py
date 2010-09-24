@@ -39,7 +39,7 @@ class Converter:
             self.connection[key] = prob
 
     #convert from kana to kanji
-    def convert(self, input, output):
+    def convert(self, input, output=False):
         length = len(input)
 
         #create lattice
@@ -62,7 +62,10 @@ class Converter:
                     break
                 def score(left):
                     return left.total * self.connection.get(left.pos+"_"+right.pos, 0.0)
-                best = max(lattice[j], key=score)
+                best = None
+                for node in lattice[j]:
+                    if best == None or score(node) > score(best):
+                        best = node
                 right.total = right.prob * score(best)
                 right.back = best.index
         if output:

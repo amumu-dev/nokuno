@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 #encoding: utf-8
+from sys import path
 from urllib2 import unquote
+
+directory = "/home/nokuno/nokuno/python/stakk"
+path.append(directory)
 from pos_bigram import Converter
 
-
-dictionary="data/dictionary.txt"
-connection="data/connection.txt"
-
+dictionary = directory + "/data/dictionary.txt"
+connection = directory + "/data/connection.txt"
 converter = Converter(dictionary, connection, "\t")
 
 def application(environ, start_response):
