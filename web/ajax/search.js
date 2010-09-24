@@ -30,8 +30,7 @@ function peekQuery () {
     if (query == "") {
         result.style.display = "none";
     } else if (oldquery != query) {
-        /*
-        xmlhttp.open("GET", "search.cgi?" + query, true);
+        xmlhttp.open("GET", "/echo?query=" + query, true);
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 result.style.display = "block";
@@ -39,9 +38,11 @@ function peekQuery () {
             }
         }
         xmlhttp.send(null)
-        */
+        /*
+        // local echo
         result.style.display = "block";
         result.innerHTML = textbox.value;
+        */
     }
     oldquery = query;
 }
