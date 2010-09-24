@@ -9,6 +9,8 @@ parser.add_option("-t", dest="threshold", type="int", default=0)
 
 title = ""
 bag_of_words = {}
+
+#parse wikipedia corpus processed by mecab with document unit
 for line in sys.stdin:
     words = line.strip().split(" ")
     if len(words) == 0:
