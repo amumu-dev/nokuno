@@ -1,6 +1,5 @@
 #!/usr/bin/python
 #encoding: utf-8
-#文字コード認識用
 import sys
 from optparse import OptionParser
 
@@ -11,6 +10,7 @@ parser.add_option("-w", dest="width", type="int", default=10)
 parser.add_option("-d", dest="dist", type="int", default=5)
 (o, args) = parser.parse_args()
 
+#emit co-occurrence using sliding window.
 for line in sys.stdin:
     words = line.split()
     length = len(words)
@@ -20,7 +20,3 @@ for line in sys.stdin:
                 if o.right == None or words[j] == o.right:
                     print words[i], words[j]
 
-"""
-usage:
-    cat wakati.txt | collocation.py | sort | uniq -c > collocation.txt
-"""
