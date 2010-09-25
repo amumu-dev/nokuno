@@ -41,6 +41,21 @@ function peekQuery () {
     }
     oldquery = query;
 }
+function keyCode(e) {
+    if(document.all)
+        return e.keyCode;
+    else if(document.getElementById)
+        return (e.keyCode)? e.keyCode: e.charCode;
+    else if(document.layers)
+        return e.which;
+}
+
+function check(e) {
+    key = keyCode(e);
+    if (key == 32) {
+        peekQuery();
+    }
+}
 
 onload = function () { setInterval("peekQuery()", 800); }
 
