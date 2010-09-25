@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 import re
-
-"""かな⇔ローマ字を変換する"""
 
 def _make_kana_convertor():
     """ひらがな⇔カタカナ変換器を作る"""
@@ -47,7 +44,6 @@ def _make_kana_convertor():
 
 hiragana2katakana, katakana2hiragana = _make_kana_convertor()
 
-################################################################################
 
 def _make_romaji_convertor():
     """ローマ字⇔かな変換器を作る"""
@@ -188,9 +184,6 @@ def _make_romaji_convertor():
 
 
 romaji2katakana, romaji2hiragana, kana2romaji = _make_romaji_convertor()
-
-################################################################################
-
 
 if __name__ == "__main__":
     for s in ("mohayonao", "twitter", "ukulele", "monthy python", "spam!", "lambda"):
