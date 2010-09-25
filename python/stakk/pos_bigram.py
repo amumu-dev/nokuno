@@ -3,7 +3,6 @@
 from sys import stdin
 from optparse import OptionParser
 from format import format
-from inspect import getmembers
 
 #lattice node
 class Node:
@@ -40,47 +39,50 @@ class Converter:
 
     #convert from kana to kanji
     def convert(self, input, output=False):
-        length = len(input)
+        self.length = len(input)
 
         #create lattice
-        lattice = [[] for i in range(length+2)]
-        lattice[0].append(Node(' ', '<S>', 'その他', 1.0, 0, 1.0))
-        lattice[-1].append(Node(' ', '</S>', 'その他', 1.0, 0))
-        for i in range(length):
-            for j in range(i+1, length+1):
+        self.lattice = [[] for i in range(self.length+2)]
+        self.lattice[0].append(Node(' ', '<S>', 'その他', 1.0, 0, 1.0))
+        self.lattice[-1].append(Node(' ', '</S>', 'その他', 1.0, 0))
+        for i in range(self.length):
+            for j in range(i+1, self.length+1):
                 yomi = input[i:j]
                 for yomi, word, pos, prob in self.dictionary.get(yomi, []):
-                    index = len(lattice[j])
+                    index = len(self.lattice[j])
                     node = Node(yomi, word, pos, prob, index)
-                    lattice[j].append(node)
+                    self.lattice[j].append(node)
 
         #forward search
-        for i in range(1, length+2):
-            for right in lattice[i]:
+        for i in range(1, self.length+2):
+            for right in self.lattice[i]:
                 j = i - len(right.yomi)
-                if len(lattice[j]) == 0:
+                if len(self.lattice[j]) == 0:
                     break
                 def score(left):
                     return left.total * self.connection.get(left.pos+"_"+right.pos, 0.0)
                 best = None
-                for node in lattice[j]:
+                for node in self.lattice[j]:
                     if best == None or score(node) > score(best):
                         best = node
                 right.total = right.prob * score(best)
                 right.back = best.index
         if output:
-            for node in lattice: print format(node)
+            for node in self.lattice: print format(node)
 
         #back trace
-        current = length
+        current = self.length
         position = 0
-        result = ""
+        self.result = []
         while current > 0:
-            node = lattice[current][position]
-            result = node.word + " " + result
+            node = self.lattice[current][position]
+            self.result = [node.word] + self.result
             position = node.back
             current -= len(node.yomi)
-        return result
+
+    #get string result
+    def getResult(self):
+        return ''.join(self.result)
 
 if __name__ == '__main__':
     #parse options
@@ -95,5 +97,6 @@ if __name__ == '__main__':
     #input from stdin
     for line in stdin:
         input = line.strip()
-        print converter.convert(input, options.output)
+        converter.convert(input, options.output)
+        print converter.getResult()
 
