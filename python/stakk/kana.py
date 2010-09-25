@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import re
+from sys import stdin
 
 def _make_kana_convertor():
     """ひらがな⇔カタカナ変換器を作る"""
@@ -185,7 +186,7 @@ def _make_romaji_convertor():
 
 romaji2katakana, romaji2hiragana, kana2romaji = _make_romaji_convertor()
 
-if __name__ == "__main__":
+def test():
     for s in ("mohayonao", "twitter", "ukulele", "monthy python", "spam!", "lambda"):
         print s, "\t>\t", romaji2katakana(s)
     print "=" * 20
@@ -211,3 +212,9 @@ if __name__ == "__main__":
         return romaji2hiragana(s)
     
     print amasakas("さかさま")
+
+if __name__ == "__main__":
+    for line in stdin:
+        word = line.strip().split("\t", 2)
+        word[0] = katakana2hiragana(word[0])
+        print "\t".join(word)
