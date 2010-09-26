@@ -39,6 +39,7 @@ class Converter:
 
     #convert from kana to kanji
     def convert(self, input, output=False):
+        self.input = input
         self.length = len(input)
 
         #create lattice
@@ -76,13 +77,34 @@ class Converter:
         self.result = []
         while current > 0:
             node = self.lattice[current][position]
-            self.result = [node.word] + self.result
+            self.result = [node] + self.result
             position = node.back
             current -= len(node.yomi)
 
     #get string result
     def getResult(self):
-        return ''.join(self.result)
+        return ' '.join(node.word for node in self.result)
+
+    #get candidate list
+    def getCandidates(self):
+        current = 0
+        candidates = []
+        for node in self.result:
+            current += len(node.yomi)
+            words = [node.word]
+            for cand in self.lattice[current]:
+                if cand != node and len(cand.yomi) == len(node.yomi):
+                    words.append(cand.word)
+            candidates.append(words)
+        return candidates
+
+    #get candidate string
+    def getCandidatesString(self):
+        candidates = self.getCandidates()
+        result = ""
+        for nodes in candidates:
+            result += ' '.join(node for node in nodes) + "\n"
+        print result
 
 if __name__ == '__main__':
     #parse options
@@ -98,5 +120,6 @@ if __name__ == '__main__':
     for line in stdin:
         input = line.strip()
         converter.convert(input, options.output)
-        print converter.getResult()
+        #print converter.getResult()
+        print converter.getCandidatesString()
 
