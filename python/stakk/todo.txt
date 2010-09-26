@@ -5,3 +5,7 @@
 * support mozc data format
 * use fast server than wsgiref.simple_server
 
+<Dream>
+* succinct trie
+* prediction, spelling correction
+
