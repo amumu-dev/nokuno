@@ -1,39 +1,55 @@
 #!/usr/bin/env python
 #encoding: utf-8
-import sys
+from sys import stdin
 from optparse import OptionParser
 from format import format
+from kana import katakana2hiragana
 
 parser = OptionParser()
-parser.add_option("-y", dest="yomi", default="data/word_yomi_unigram.txt")
-parser.add_option("-w", dest="word", default="data/pos_word_unigram.txt")
 parser.add_option("-s", dest="separator", default="\t")
 (o, args) = parser.parse_args()
 
+#marginalize
+def marginalize(dictionary, column):
+    result = {}
+    for key, value in dictionary.items():
+        k = key[:column] + key[column+1:]
+        result[k] = result.get(k,0.0) + value
+    return result
+
+#normalize
+def normalize(dictionary, column):
+    total = {}
+    for key, value in dictionary.items():
+        k = key[column]
+        total[k] = total.get(k,0.0) + value
+    result = {}
+    for key, value in dictionary.items():
+        k = key[column]
+        result[key] = value / total[k]
+    return result
+
 #load dictionary
-yomi2word = {}
-for line in open(o.yomi):
-    (word, yomi, prob) = line.strip().split(o.separator, 2)
-    prob = float(prob)
-    if not yomi in yomi2word:
-        yomi2word[yomi] = [(word, prob)]
-    else:
-        yomi2word[yomi].append((word, prob))
-#print format(yomi2word.items()[:10])
+dictionary = {}
+for line in stdin:
+    (yomi, word, pos, freq) = line.strip().split(o.separator, 3)
+    freq = float(freq)
+    yomi = katakana2hiragana(yomi)
+    dictionary[(yomi,word,pos)] = float(freq)
 
-word2pos = {}
-for line in open(o.word):
-    (pos, word, prob) = line.strip().split(o.separator, 2)
-    prob = float(prob)
-    if not word in word2pos:
-        word2pos[word] = [(pos, prob)]
-    else:
-        word2pos[word].append((pos, prob))
-#print format(word2pos.items()[:10])
+#create conditionary distribution
+word_pos = marginalize(dictionary, 0) #marginalize on yomi
+word_pos = normalize(word_pos, 1)   #normalize given pos
 
-for yomi, words in yomi2word.items():
-    for word, prob1 in words:
-        if word in word2pos:
-            for pos, prob2 in word2pos[word]:
-                prob = float(prob1) * float(prob2)
-                print o.separator.join([yomi, word, pos, str(prob)])
+#print format(word_pos.items()[:10])
+
+yomi_word = marginalize(dictionary, 2) #marginalize on pos
+yomi_word = normalize(yomi_word, 1) #normalize given word
+
+#print format(yomi_word.items()[:10])
+
+for key,value in dictionary.items():
+    (yomi, word, pos) = key
+    probability = word_pos[(word,pos)] * yomi_word[(yomi,word)]
+    print "\t".join(key) + "\t" + str(probability)
+
