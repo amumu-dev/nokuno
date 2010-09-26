@@ -16,7 +16,7 @@ def application(environ, start_response):
     query = environ['QUERY_STRING'].split('=',1)[1]
     query = unquote(query)
     converter.convert(query)
-    output = converter.getResult()
+    output = converter.getCandidates()
     response_headers = [('Content-type', 'text/plain'),
                         ('Content-Length', str(len(output)))]
     start_response(status, response_headers)
