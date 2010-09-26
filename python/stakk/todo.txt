@@ -3,3 +3,5 @@
 * segment-based candidates
 * merge same words with diffrent pos
 * support mozc data format
+* use fast server than wsgiref.simple_server
+
