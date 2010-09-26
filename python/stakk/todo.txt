@@ -1,4 +1,5 @@
 <Implement>
 * process head of sentence correctly
 * segment-based candidates
+* merge same words with diffrent pos
 * support mozc data format
