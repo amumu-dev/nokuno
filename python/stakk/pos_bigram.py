@@ -85,24 +85,25 @@ class Converter:
     def getResult(self):
         return ' '.join(node.word for node in self.result)
 
-    #get candidate list
-    def getCandidates(self):
+    #create word-based candidates list
+    #TODO: implement segment-based candidates
+    def createCandidates(self):
         current = 0
-        candidates = []
+        self.candidates = []
         for node in self.result:
             current += len(node.yomi)
             words = [node.word]
             for cand in self.lattice[current]:
                 if cand != node and len(cand.yomi) == len(node.yomi):
                     words.append(cand.word)
-            candidates.append(words)
-        return candidates
+            self.candidates.append(words)
+        return self.candidates
 
     #get candidate string
-    def getCandidatesString(self):
-        candidates = self.getCandidates()
+    def getCandidates(self):
+        self.createCandidates()
         result = ""
-        for nodes in candidates:
+        for nodes in self.candidates:
             result += ' '.join(node for node in nodes) + "\n"
         print result
 
@@ -121,5 +122,5 @@ if __name__ == '__main__':
         input = line.strip()
         converter.convert(input, options.output)
         #print converter.getResult()
-        print converter.getCandidatesString()
+        print converter.getCandidates()
 
