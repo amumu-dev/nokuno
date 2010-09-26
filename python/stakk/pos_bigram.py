@@ -97,7 +97,6 @@ class Converter:
                 if cand != node and len(cand.yomi) == len(node.yomi):
                     words.append(cand.word)
             self.candidates.append(words)
-        self.candidates
 
     #get candidate string
     def getCandidates(self):
