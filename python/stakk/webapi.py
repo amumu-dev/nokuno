@@ -7,8 +7,8 @@ directory = "/home/nokuno/nokuno/python/stakk"
 path.append(directory)
 from pos_bigram import Converter
 
-dictionary = directory + "/data/dictionary.txt"
-connection = directory + "/data/connection.txt"
+dictionary = directory + "/data/dictionary02.txt"
+connection = directory + "/data/connection02.txt"
 converter = Converter(dictionary, connection, "\t")
 
 def application(environ, start_response):
@@ -17,7 +17,8 @@ def application(environ, start_response):
     query = unquote(query)
     converter.convert(query)
     converter.createCandidates()
-    output = '<br>'.join(' '.join(cand) for cand in converter.candidates)
+    output = converter.getResult() + '<br>\n'
+    output += '<br>\n'.join(' '.join(cand) for cand in converter.candidates)
     response_headers = [('Content-type', 'text/plain'),
                         ('Content-Length', str(len(output)))]
     start_response(status, response_headers)

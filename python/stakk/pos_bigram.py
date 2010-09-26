@@ -88,7 +88,6 @@ class Converter:
         return ' '.join(node.word for node in self.result)
 
     #create word-based candidates list
-    #TODO: implement segment-based candidates
     def createCandidates(self):
         current = 0
         self.candidates = []
