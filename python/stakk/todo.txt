@@ -1,0 +1,4 @@
+<Implement>
+* process head of sentence correctly
+* segment-based candidates
+* support mozc data format
