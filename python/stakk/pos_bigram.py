@@ -44,8 +44,8 @@ class Converter:
 
         #create lattice
         self.lattice = [[] for i in range(self.length+2)]
-        self.lattice[0].append(Node(' ', '<S>', 'その他', 1.0, 0, 1.0))
-        self.lattice[-1].append(Node(' ', '</S>', 'その他', 1.0, 0))
+        self.lattice[0].append(Node(' ', '<S>', '文頭', 1.0, 0, 1.0))
+        self.lattice[-1].append(Node(' ', '</S>', '文末', 1.0, 0))
         for i in range(self.length):
             for j in range(i+1, self.length+1):
                 yomi = input[i:j]
@@ -61,6 +61,8 @@ class Converter:
                 if len(self.lattice[j]) == 0:
                     break
                 def score(left):
+                    if left.pos == '文頭': return 1.0
+                    if right.pos == '文末': return left.total
                     return left.total * self.connection.get(left.pos+"_"+right.pos, 0.0)
                 best = None
                 for node in self.lattice[j]:
@@ -73,11 +75,11 @@ class Converter:
 
         #back trace
         current = self.length
-        position = 0
+        position = self.lattice[self.length+1][0].back
         self.result = []
         while current > 0:
             node = self.lattice[current][position]
-            self.result = [node] + self.result
+            self.result.insert(0, node)
             position = node.back
             current -= len(node.yomi)
 
@@ -120,6 +122,7 @@ if __name__ == '__main__':
     for line in stdin:
         input = line.strip()
         converter.convert(input, options.output)
-        #print converter.getResult()
+        print converter.getResult()
         print converter.getCandidates()
+        #print format(converter.lattice)
 
