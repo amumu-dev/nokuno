@@ -1,4 +1,5 @@
 <Implement>
+* implement web ui
 * process head of sentence correctly
 * segment-based candidates
 * merge same words with diffrent pos
