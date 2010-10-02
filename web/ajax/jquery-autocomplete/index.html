@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>jQuery autocompleter</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery.autocomplete.js"></script>
+	<script type="text/javascript">
+
+$(function() {
+
+	$("#ac1").autocomplete('search.php');
+
+	$("#flush").click(function() {
+		var ac = $("#ac1").data('autocompleter');
+		if (ac && $.isFunction(ac.cacheFlush)) {
+			ac.cacheFlush();
+		} else {
+			alert('Error flushing cache');
+		}
+	});
+
+	$("#ac2").autocomplete({
+		url: 'search.php',
+		sortFunction: function(a, b) {
+			a = String(a.data[0]).toLowerCase();
+			b = String(b.data[0]).toLowerCase();
+			if (a > b) {
+				return 1;
+			}
+			if (a < b) {
+				return -1;
+			}
+			return 0;
+		},
+		showResult: function(value, data) {
+			return '<span style="color:red">' + value + '</span>';
+		},
+		onItemSelect: function(item) {
+		    var text = 'You selected ' + item.value;
+		    if (item.data.length) {
+		        text += ' [' + item.data.join(', ') + ']';
+		    }
+		    alert(text);
+		}
+	});
+
+    $("#toggle").click(function() {
+    	$("#hide").toggle(); // To test repositioning
+    });
+
+});
+
+	</script>
+	<link rel="stylesheet" type="text/css" href="jquery.autocomplete.css">
+</head>
+
+<body>
+
+	<h1>jQuery autocomplete</h1>
+
+	<p class="info">This demo is built around a list of English bird names. For example, start typing <i>falcon</i> in one of the boxes below.</p>
+
+    <fieldset><legend>Debugging &amp; Testing</legend>
+        <p id="hide">HIDE THIS</p>
+    	<p><a href="#" id="flush">Fush the cache</a></p>
+    	<p><a href="#" id="toggle">Toggle hidden block</a></p>
+    </fieldset>
+
+	<h2>Demo 1</h2>
+
+	<form>
+		<input type="text" id="ac1">
+	</form>
+
+	<h2>Demo 2 (sorted on scientific name)</h2>
+
+	<form>
+		<input type="text" id="ac2">
+	</form>
+
+    <p style="height: 100px" class="spacer">&nbsp;</p>
+
+    <hr>
+
+</body>
+
+</html>
