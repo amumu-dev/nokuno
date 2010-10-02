@@ -18,6 +18,8 @@ def format(x):
         result = "'" + str(x) + "'"
     elif type(x) == float:
         result = "%.2e" % (x)
+    elif type(x) == unicode:
+        result = x.encode('utf-8')
     else:
         result = str(x)
     return result
