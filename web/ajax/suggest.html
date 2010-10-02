@@ -1,3 +1,53 @@
-<script type="javascript">
-new Suggest.Local("text", "suggest", list);
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja"> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta http-equiv="Content-Script-Type" content="text/javascript" /> 
+<title>Suggest Test</title>
+<style type="text/css"> 
+<!--
+#suggest {
+    position: absolute;
+    background-color: #FFFFFF;
+border: 1px solid #CCCCFF;
+width: 252px;
+}
+#suggest div {
+padding: 1px;
+display: block;
+width: 250px;
+overflow: hidden;
+          white-space: nowrap;
+}
+#suggest div.select{
+color: #FFFFFF;
+       background-color: #3366FF;
+}
+#suggest div.over{
+    background-color: #99CCFF;
+}
+-->
+</style> 
+<script type="text/javascript" src="suggest.js"></script>
+<script type="text/javascript">
+<!--
+var list = [ 'Java', 'JavaScript', 'Perl', 'Ruby', 'PHP', 'Python', 'C', 'C++', '.NET',
+    'MySQL', 'Oracle', 'PostgreSQL'];
+
+var start = function(){new Suggest.Local("text", "suggest", list);};
+window.addEventListener ?
+window.addEventListener('load', start, false) :
+window.attachEvent('onload', start);
+-->
 </script>
+</head>
+<body>
+<h1>Suggest Test</h1>
+<div style="margin-left:30px; margin-top:4px;"> 
+<input id="text" type="text" name="pattern" value="" autocomplete="on" size="40" style="display: block"/> 
+<div id="suggest" style="display:none;"></div> 
+</div>
+</body>
+</html>
+
