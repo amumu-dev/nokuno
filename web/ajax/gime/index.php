@@ -17,7 +17,11 @@
 <tr>
 <td>
 <?php
-echo $_GET['query'];
+$base = "http://www.google.com/transliterate?langpair=ja-Hira|ja&text=";
+$query = $_GET['query'];
+$url = $base . urlencode($query);
+$result = file_get_contents($url);
+echo $result;
 ?>
 </td>
 </tr>
