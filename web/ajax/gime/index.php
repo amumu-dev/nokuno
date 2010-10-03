@@ -16,7 +16,7 @@
 </style>
 </head>
 <body>
-<h1>Googleかな漢字変換APIのテスト</h1>
+<h1><a href="./">Googleかな漢字変換APIのテスト</a></h1>
 <p>
 <a href="http://www.google.com/intl/ja/ime/cgiapi.html">Google CGI API for Japanese Input</a>のテストです。
 以下のフォームに入力してください。
