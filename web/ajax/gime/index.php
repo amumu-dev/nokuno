@@ -13,18 +13,23 @@
 <input type="text" name="query"/>
 <input type="submit" value="変換">
 </form> 
-<table border="1">
-<tr>
-<td>
 <?php
-$base = "http://www.google.com/transliterate?langpair=ja-Hira|ja&text=";
-$query = $_GET['query'];
-$url = $base . urlencode($query);
-$result = file_get_contents($url);
-echo $result;
+if (isset($_GET['query'])) {
+    $query = $_GET['query'];
+    $result = `./fetch.py -q $query`;
+    $lines = explode("\n", $result);
+    echo "<table border='1'>";
+    foreach($lines as $line) {
+        if(strlen($line) == 0) continue;
+        echo "<tr>";
+        $items = explode("\t", $line);
+        foreach($items as $item) {
+            echo "<td>$item</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</table>";
+}
 ?>
-</td>
-</tr>
-</table>
 </body>
 </html>
