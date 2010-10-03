@@ -19,5 +19,6 @@ if __name__ == '__main__':
     parser.add_option("-q", dest="query", default="へんかん")
     (options, args) = parser.parse_args()
     object = convert(options.query)
+    for item in object:
+        print '\t'.join(word.encode('utf-8') for word in item[1])
     #print format(object)
-    print '\n'.join(object[0][1])
