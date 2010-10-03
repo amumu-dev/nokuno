@@ -22,7 +22,7 @@
 以下のフォームに入力してください。
 </p>
 <form>
-<input type="text" name="query"/>
+<input type="text" name="query" value="<?php echo $_GET['query'];?>"/>
 <input type="submit" value="変換">
 </form> 
 <?php
