@@ -19,7 +19,7 @@
 <h1><a href="./">Googleかな漢字変換APIのテスト</a></h1>
 <p>
 <a href="http://www.google.com/intl/ja/ime/cgiapi.html">Google CGI API for Japanese Input</a>のテストです。
-以下のフォームに入力してください。
+以下のフォームにひらがなを入力してください。
 </p>
 <form>
 <input type="text" name="query" value="<?php echo $_GET['query'];?>"/>
