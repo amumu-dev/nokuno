@@ -1,5 +1,4 @@
 <Implement>
-* implement web ui
 * process head of sentence correctly
 * segment-based candidates
 * merge same words with diffrent pos
@@ -9,4 +8,7 @@
 <Dream>
 * succinct trie
 * prediction, spelling correction
+
+<Suspend>
+* implement web ui
 
