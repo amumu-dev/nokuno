@@ -1,8 +1,7 @@
 <Implement>
-* process head of sentence correctly
+* mozc data format
 * segment-based candidates
 * merge same words with diffrent pos
-* support mozc data format
 * use fast server than wsgiref.simple_server
 
 <Dream>
