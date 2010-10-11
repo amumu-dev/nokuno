@@ -1,13 +1,13 @@
 <Implement>
-* mozc data format
 * segment-based candidates
 * merge same words with diffrent pos
-* use fast server than wsgiref.simple_server
 
 <Dream>
 * succinct trie
-* prediction, spelling correction
+* prediction
+* spelling correction
 
 <Suspend>
 * implement web ui
+* use fast server than wsgiref.simple_server
 
