@@ -66,20 +66,14 @@ class Trie:
             results = [('', self.values)]
         if not self.children:
             return results
-        if not key and distance == 0:
-            return results
         if key:
             first, rest = key[0], key[1:]
-        if key and first in self.children:
-            children = self.children[first].fuzzy_search(rest, distance)
-            results.extend((first + k,v) for k,v in children)
-        if distance > 0:
-            # insert
-            for k1, v1 in self.children.items():
-                children = v1.fuzzy_search(key, distance-1)
-                results.extend((k1+k,v) for k,v in children)
-            # replace
-            if key:
+            # match
+            if first in self.children:
+                children = self.children[first].fuzzy_search(rest, distance)
+                results.extend((first + k,v) for k,v in children)
+            if distance > 0:
+                # replace
                 for k1, v1 in self.children.items():
                     if k1 != first:
                         children = v1.fuzzy_search(rest, distance-1)
@@ -88,6 +82,11 @@ class Trie:
                 children = self.fuzzy_search(rest, distance-1)
                 results.extend(children)
                 
+        if distance > 0:
+            # insert
+            for k1, v1 in self.children.items():
+                children = v1.fuzzy_search(key, distance-1)
+                results.extend((k1+k,v) for k,v in children)
         return results
 
     def display(self, key="", depth=0):
