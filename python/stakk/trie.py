@@ -85,7 +85,7 @@ class Trie:
                     results.extend((k1+k,v) for k,v in children)
                 # delete
                 children = self.fuzzy_search(rest, distance-1)
-                results.extend((k1+k,v) for k,v in children)
+                results.extend(children)
                 
         return results
 
@@ -136,6 +136,8 @@ if __name__ == '__main__':
         print 'search: ', trie.search('tryed')
         print 'search: ', trie.search('trye')
         print 'fuzzy: ', trie.fuzzy_search('try')
+        print 'fuzzy: ', trie.fuzzy_search('ty')
+        print 'fuzzy: ', trie.fuzzy_search('trys')
         print 'fuzzy: ', trie.fuzzy_search('trye')
         print 'fuzzy: ', trie.fuzzy_search('tay')
         print 'fuzzy: ', trie.fuzzy_search('atry')
