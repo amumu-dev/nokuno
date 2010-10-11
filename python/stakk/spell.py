@@ -50,7 +50,7 @@ class SpellingCorrector:
         for yomi, distance, values in results:
             for word, lid, rid, cost in values:
                 total = cost + self.connection[lid]
-                rank = total + distance * 5000
+                rank = total + (threshold-distance) * 5000
                 entry = Entry(yomi, distance, word, lid, rid, cost, rank)
                 entries.append(entry)
         entries.sort(key=lambda x:x.rank)
