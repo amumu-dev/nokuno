@@ -16,7 +16,7 @@ class Entry:
         self.cost = cost
         self.rank = rank
     def __str__(self):
-        return format((self.word, self.yomi, self.distance, self.cost, self.rank))
+        return format((self.word, self.yomi, self.rank))
 
 #spelling corrector class
 class SpellingCorrector:
