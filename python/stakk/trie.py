@@ -89,6 +89,16 @@ class Trie:
                 results.extend((k1+k,d,v) for k,d,v in children)
         return results
 
+    def fuzzy_search_ex(self, key, distance=2):
+        results = self.fuzzy_search(key, distance)
+        dictionary = {}
+        for k, d, v in results:
+            if not k in dictionary or d > dictionary[k][0]:
+                dictionary[k] = (d, v)
+        result = [(k, d, v) for k, (d,v) in dictionary.items()]
+        result.sort(key=lambda x:x[1], reverse=True)
+        return result
+
     def display(self, key="", depth=0):
         if self.values:
             print key + "\t" + format(self.values)
@@ -127,7 +137,7 @@ if __name__ == '__main__':
                     print format(i)
             # fuzzy search
             if options.mode in ('all', 'fuzzy'):
-                result = trie.fuzzy_search(input, options.distance)
+                result = trie.fuzzy_search_ex(input, options.distance)
                 print 'fuzzy:'
                 for i in result:
                     print format(i)
