@@ -100,6 +100,7 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("-f", dest="filename")
     parser.add_option("-s", dest="separator", default="\t")
+    parser.add_option("-d", dest="distance", type="int", default=3)
     (options, args) = parser.parse_args()
 
     trie = Trie()
@@ -118,6 +119,11 @@ if __name__ == '__main__':
             print 'predict:'
             for i in result:
                 print format(i)
+            result = trie.fuzzy_search(input, options.distance)
+            print 'fuzzy:'
+            for i in result:
+                print format(i)
+
     else:
         trie.insert('try', 1)
         trie.insert('tryed', 2)
