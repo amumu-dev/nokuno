@@ -101,6 +101,7 @@ if __name__ == '__main__':
     parser.add_option("-f", dest="filename")
     parser.add_option("-s", dest="separator", default="\t")
     parser.add_option("-d", dest="distance", type="int", default=1)
+    parser.add_option("-m", dest="mode", default="all")
     (options, args) = parser.parse_args()
 
     if options.filename != None:
@@ -112,18 +113,24 @@ if __name__ == '__main__':
 
         for line in stdin:
             input = unicode(line.strip(), 'utf-8')
-            result = trie.common_prefix_search(input)
-            print 'common prefix:'
-            for i in result:
-                print format(i)
-            result = trie.predictive_search(input)
-            print 'predict:'
-            for i in result:
-                print format(i)
-            result = trie.fuzzy_search(input, options.distance)
-            print 'fuzzy:'
-            for i in result:
-                print format(i)
+            # common prefix search
+            if options.mode in ('all', 'common'):
+                result = trie.common_prefix_search(input)
+                print 'common prefix:'
+                for i in result:
+                    print format(i)
+            # predictive search
+            if options.mode in ('all', 'predict'):
+                result = trie.predictive_search(input)
+                print 'predict:'
+                for i in result:
+                    print format(i)
+            # fuzzy search
+            if options.mode in ('all', 'fuzzy'):
+                result = trie.fuzzy_search(input, options.distance)
+                print 'fuzzy:'
+                for i in result:
+                    print format(i)
 
     else:
         trie = Trie()
