@@ -101,17 +101,18 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("-f", dest="filename")
     parser.add_option("-s", dest="separator", default="\t")
-    parser.add_option("-d", dest="distance", type="int", default=3)
+    parser.add_option("-d", dest="distance", type="int", default=1)
     (options, args) = parser.parse_args()
 
     if options.filename != None:
         trie = Trie()
         for line in open(options.filename):
             key, value = line.strip().split(options.separator, 1)
+            key, value = unicode(key, 'utf-8'), unicode(value, 'utf-8')
             trie.insert(key, value)
 
         for line in stdin:
-            input = line.strip()
+            input = unicode(line.strip(), 'utf-8')
             result = trie.common_prefix_search(input)
             print 'common prefix:'
             for i in result:
