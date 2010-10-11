@@ -21,10 +21,10 @@ class Node:
 #converter class
 class Converter:
     #load data
-    def __init__(self, dic_file, con_file):
+    def __init__(self, dictionary, connection):
         #initialize dictionary
         self.dictionary = {}
-        for line in open(dic_file):
+        for line in open(dictionary):
             (yomi, lid, rid, cost, word) = line.strip().split("\t", 4)
             lid, rid, cost = int(lid), int(rid), int(cost)
             self.dictionary.setdefault(yomi, [])
@@ -32,7 +32,7 @@ class Converter:
 
         #initialize connection
         self.connection = {}
-        file = open(con_file)
+        file = open(connection)
         file.readline()
         for line in file:
             (lid, rid, cost) = line.strip().split(" ", 2)
@@ -49,8 +49,8 @@ class Converter:
 
         #create lattice
         self.lattice = [[] for i in range(self.length+2)]
-        self.lattice[0].append(Node(' ', '<S>', 0, 0, 0, 0))
-        self.lattice[-1].append(Node(' ', '</S>', 0, 0, 0, 0))
+        self.lattice[0].append(Node(' ', 'BOS', 0, 0, 0, 0))
+        self.lattice[-1].append(Node(' ', 'EOS', 0, 0, 0, 0))
         for i in range(self.length):
             for j in range(i+1, self.length+1):
                 yomi = input[i:j]
