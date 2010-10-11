@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 #encoding: utf-8
-from format import format
-from optparse import OptionParser
 from sys import stdin
+from optparse import OptionParser
+from format import format
 
 class Trie:
     def __init__(self, data=[]):
@@ -73,7 +73,7 @@ class Trie:
         if key and first in self.children:
             children = self.children[first].fuzzy_search(rest, distance)
             results.extend((first + k,v) for k,v in children)
-        elif distance > 0:
+        if distance > 0:
             # insert
             for k1, v1 in self.children.items():
                 children = v1.fuzzy_search(key, distance-1)
@@ -81,8 +81,9 @@ class Trie:
             # replace
             if key:
                 for k1, v1 in self.children.items():
-                    children = v1.fuzzy_search(rest, distance-1)
-                    results.extend((k1+k,v) for k,v in children)
+                    if k1 != first:
+                        children = v1.fuzzy_search(rest, distance-1)
+                        results.extend((k1+k,v) for k,v in children)
                 # delete
                 children = self.fuzzy_search(rest, distance-1)
                 results.extend(children)
@@ -103,8 +104,8 @@ if __name__ == '__main__':
     parser.add_option("-d", dest="distance", type="int", default=3)
     (options, args) = parser.parse_args()
 
-    trie = Trie()
     if options.filename != None:
+        trie = Trie()
         for line in open(options.filename):
             key, value = line.strip().split(options.separator, 1)
             trie.insert(key, value)
@@ -125,6 +126,13 @@ if __name__ == '__main__':
                 print format(i)
 
     else:
+        trie = Trie()
+        trie.insert(u'わたし',5)
+        trie.insert(u'わし',6)
+        trie.display()
+        print 'fuzzy: ', format(trie.fuzzy_search(u'わし'))
+
+        trie = Trie()
         trie.insert('try', 1)
         trie.insert('tryed', 2)
         trie.insert('tryes', 3)
@@ -143,8 +151,7 @@ if __name__ == '__main__':
         print 'search: ', trie.search('trye')
         print 'fuzzy: ', trie.fuzzy_search('try')
         print 'fuzzy: ', trie.fuzzy_search('ty')
-        print 'fuzzy: ', trie.fuzzy_search('trys')
-        print 'fuzzy: ', trie.fuzzy_search('trye')
         print 'fuzzy: ', trie.fuzzy_search('tay')
-        print 'fuzzy: ', trie.fuzzy_search('atry')
+        print 'fuzzy: ', trie.fuzzy_search('tray')
+        print 'fuzzy: ', trie.fuzzy_search('trye')
 
