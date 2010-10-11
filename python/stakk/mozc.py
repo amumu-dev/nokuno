@@ -31,15 +31,16 @@ class Converter:
             self.dictionary[yomi].append([yomi, word, lid, rid, cost])
 
         #initialize connection
-        self.connection = {}
         file = open(connection)
-        file.readline()
+        lsize, rsize = file.readline().strip().split(" ", 1)
+        lsize, rsize = int(lsize), int(rsize)
+        self.connection = [None] * lsize
+        for i in range(lsize):
+            self.connection[i] = [None] * rsize
         for line in file:
             (lid, rid, cost) = line.strip().split(" ", 2)
-            cost = int(cost)
-            key = lid + "_" + rid
-            if cost <= 10000:
-                self.connection[key] = cost
+            lid, rid, cost = int(lid), int(rid), int(cost)
+            self.connection[lid][rid] = cost
         file.close()
 
     #convert from kana to kanji
@@ -66,10 +67,9 @@ class Converter:
                 if len(self.lattice[j]) == 0:
                     break
                 def score(left):
-                    key = str(left.rid) + "_" + str(right.lid)
                     if left.rid == 0: return 0
                     if right.lid == 0: return left.total
-                    return left.total + self.connection.get(key, float("inf"))
+                    return left.total + self.connection[left.rid][right.lid]
                 best = None
                 for node in self.lattice[j]:
                     if best == None or score(node) < score(best):
