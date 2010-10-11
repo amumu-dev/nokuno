@@ -79,8 +79,12 @@ class Trie:
                 children = v1.fuzzy_search(key, distance-1)
                 results.extend((k1+k,v) for k,v in children)
             # replace
-            for k1, v1 in self.children.items():
-                children = v1.fuzzy_search(rest, distance-1)
+            if key:
+                for k1, v1 in self.children.items():
+                    children = v1.fuzzy_search(rest, distance-1)
+                    results.extend((k1+k,v) for k,v in children)
+                # delete
+                children = self.fuzzy_search(rest, distance-1)
                 results.extend((k1+k,v) for k,v in children)
                 
         return results
