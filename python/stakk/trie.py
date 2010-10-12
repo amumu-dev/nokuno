@@ -66,33 +66,39 @@ class Trie:
             results = [('', distance, self.values)]
         if not self.children:
             return results
+
+        # normal match
         if key:
             first, rest = key[0], key[1:]
-            # match
             if first in self.children:
                 children = self.children[first].fuzzy_search(rest, distance)
                 results.extend((first + k,d,v) for k,d,v in children)
-            if distance > 0:
-                # replace
-                for k1, v1 in self.children.items():
-                    if k1 != first:
-                        children = v1.fuzzy_search(rest, distance-1)
-                        results.extend((k1+k,d,v) for k,d,v in children)
-                # delete
-                children = self.fuzzy_search(rest, distance-1)
-                results.extend(children)
-
-        # transposition
-        if len(key) > 1 and distance > 0:
-            new_key = key[1] + key[0] + key[2:]
-            children = self.fuzzy_search(new_key, distance-1)
-            results.extend(children)
-                
-        # insert
+        
+        # edit operation
         if distance > 0:
+            # insert
             for k1, v1 in self.children.items():
                 children = v1.fuzzy_search(key, distance-1)
                 results.extend((k1+k,d,v) for k,d,v in children)
+
+            # delete
+            if key:
+                children = self.fuzzy_search(key[1:], distance-1)
+                results.extend(children)
+
+            # substitution
+            if key:
+                for k1, v1 in self.children.items():
+                    if k1 != key[0]:
+                        children = v1.fuzzy_search(key[1:], distance-1)
+                        results.extend((k1+k,d,v) for k,d,v in children)
+
+            # transpose
+            if len(key) > 1:
+                new_key = key[1] + key[0] + key[2:]
+                children = self.fuzzy_search(new_key, distance-1)
+                results.extend(children)
+                    
         return results
 
     def fuzzy_search_ex(self, key, distance=2):
