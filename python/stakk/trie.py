@@ -81,9 +81,15 @@ class Trie:
                 # delete
                 children = self.fuzzy_search(rest, distance-1)
                 results.extend(children)
+
+        # transposition
+        if len(key) > 1 and distance > 0:
+            new_key = key[1] + key[0] + key[2:]
+            children = self.fuzzy_search(new_key, distance-1)
+            results.extend(children)
                 
+        # insert
         if distance > 0:
-            # insert
             for k1, v1 in self.children.items():
                 children = v1.fuzzy_search(key, distance-1)
                 results.extend((k1+k,d,v) for k,d,v in children)
@@ -171,4 +177,5 @@ if __name__ == '__main__':
         print 'fuzzy: ', trie.fuzzy_search('tay')
         print 'fuzzy: ', trie.fuzzy_search('tray')
         print 'fuzzy: ', trie.fuzzy_search('trye')
+        print 'fuzzy: ', trie.fuzzy_search('tyr')
 
