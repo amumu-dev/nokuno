@@ -61,7 +61,7 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("-d", dest="dictionary", default="data/mozc-dictionary.txt")
     parser.add_option("-c", dest="connection", default="data/mozc-connection.txt")
-    parser.add_option("-t", dest="threshold", type="int", default=1)
+    parser.add_option("-t", dest="threshold", type="int", default=2)
     (options, args) = parser.parse_args()
     corrector = SpellingCorrector(options.dictionary, options.connection)
 
