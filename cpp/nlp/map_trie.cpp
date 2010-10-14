@@ -5,8 +5,8 @@
 #include <vector>
 using namespace std;
 
-struct Trie {
-    typedef map<char, Trie> Map;
+struct MapTrie {
+    typedef map<char, MapTrie> Map;
     typedef Map::iterator Itr;
     typedef Map::value_type Pair;
     typedef pair<string, vector<string> > Entry;
@@ -20,7 +20,7 @@ struct Trie {
             string rest = key.substr(1);
             Itr itr = children.find(first);
             if (itr == children.end())
-                itr = children.insert(itr, Pair(first, Trie()));
+                itr = children.insert(itr, Pair(first, MapTrie()));
             itr->second.insert(rest, value);
         } else {
             values.push_back(value);
@@ -124,7 +124,7 @@ struct Trie {
     static string format(Entries entries) {
         string result = "";
         for (int i = 0; i < entries.size(); i++) {
-            Trie::Entry entry = entries.at(i);
+            MapTrie::Entry entry = entries.at(i);
             result += entry.first + "\t";
             for (int j = 0; j < entry.second.size(); j++)
                 result += entry.second.at(j) + " ";
@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
         }
     }
     if (filename.length() > 0) {
-        Trie trie;
+        MapTrie trie;
         ifstream ifs(filename.c_str());
         string line, input;
         while (getline(ifs, line)) {
@@ -169,26 +169,26 @@ int main(int argc, char *argv[]) {
             if (mode == "all" || mode == "search") {
                 vector<string> *result;
                 result = trie.search(input);
-                cout << Trie::format(*result) << endl;
+                cout << MapTrie::format(*result) << endl;
             }
             if (mode == "all" || mode == "common") {
-                Trie::Entries results;
+                MapTrie::Entries results;
                 trie.common_prefix_search(input, "", results);
-                cout << Trie::format(results);
+                cout << MapTrie::format(results);
             }
             if (mode == "all" || mode == "predict") {
-                Trie::Entries results;
+                MapTrie::Entries results;
                 trie.predictive_search(input, "", results);
-                cout << Trie::format(results);
+                cout << MapTrie::format(results);
             }
             if (mode == "all" || mode == "fuzzy") {
-                Trie::Entries results;
+                MapTrie::Entries results;
                 trie.fuzzy_search_ex(input, 3, results);
-                cout << Trie::format(results);
+                cout << MapTrie::format(results);
             }
         }
     } else { 
-        Trie trie;
+        MapTrie trie;
         trie.insert("tree", "value01");
         trie.insert("trie", "value02");
         trie.insert("try", "value03");
@@ -201,30 +201,30 @@ int main(int argc, char *argv[]) {
         { // search
             vector<string> *result;
             result = trie.search("tree");
-            cout << "search:\n" << Trie::format(*result) << endl;
+            cout << "search:\n" << MapTrie::format(*result) << endl;
         }
         { // common prefix search
-            Trie::Entries results;
+            MapTrie::Entries results;
             trie.common_prefix_search("tree", "", results);
-            cout << "common:\n" << Trie::format(results);
+            cout << "common:\n" << MapTrie::format(results);
         }
         { // predictive search
-            Trie::Entries results;
+            MapTrie::Entries results;
             trie.predictive_search("tre", "", results);
-            cout << "predict:\n" << Trie::format(results);
+            cout << "predict:\n" << MapTrie::format(results);
         }
         { // fuzzy search
-            Trie::Entries results;
+            MapTrie::Entries results;
             trie.fuzzy_search("tree", "", 1, results);
-            cout << "fuzzy:\n" << Trie::format(results);
+            cout << "fuzzy:\n" << MapTrie::format(results);
         }
         { // fuzzy search 2
-            Trie::Entries results;
+            MapTrie::Entries results;
             trie.fuzzy_search_ex("tree", 2, results);
-            cout << "fuzzy2:\n" << Trie::format(results);
+            cout << "fuzzy2:\n" << MapTrie::format(results);
         }
         {  // japanese test
-            Trie trie;
+            MapTrie trie;
             trie.insert("にほんご", "日本語");
             trie.insert("にほんじん", "日本人");
             trie.display();
