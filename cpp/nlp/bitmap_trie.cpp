@@ -12,7 +12,7 @@ struct BitmapTrie {
         bitmap = 0;
     }
     uint bitof(uint i) {
-        return bitmap >> i & 1;
+        return (bitmap >> i) & 1;
     }
     uint rank(uint pos) {
         uint result = 0;
@@ -23,13 +23,13 @@ struct BitmapTrie {
         return result;
     }
     uint select(uint num) {
-        uint i = 0, j = 0;
-        while (i != num) {
-            if (bitof(j))
-                i++;
-            j++;
+        uint pos = 0;
+        while (num) {
+            if (bitof(pos))
+                num--;
+            pos++;
         }
-        return j;
+        return pos-1;
     }
 
     void insert(string key) {
@@ -49,7 +49,7 @@ struct BitmapTrie {
         if (!bitmap)
             cout << "key: " << key << endl;
         for (int i = 0; i < children.size(); i++) {
-            char c = 'a' + select(i);
+            char c = 'a' + select(i+1);
             children.at(i).display(key + c);
         }
     }
@@ -57,10 +57,10 @@ struct BitmapTrie {
 
 int main(int argc, char *argv[]) {
     BitmapTrie trie;
-    // insert sorted order
+    // please insert sorted order
     trie.insert("aaa");
     trie.insert("abc");
-    // trie.insert("bbc"); //bug!
+    trie.insert("bbc");
     trie.display();
     return 0;
 }
