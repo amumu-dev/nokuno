@@ -1,30 +1,40 @@
 #include <iostream>
 #include <fstream>
-#include <map>
 #include <string>
 #include <vector>
+#include <list>
+#include <map>
 using namespace std;
 
-struct Trie {
-    typedef map<char, Trie> Map;
-    typedef Map::iterator Itr;
-    typedef Map::value_type Pair;
+struct ListTrie {
     typedef pair<string, vector<string> > Entry;
     typedef vector<Entry> Entries;
-    Map children;
+    typedef pair<char, ListTrie> Pair;
+    typedef list<Pair>::iterator Itr;
+    list<Pair> children;
     vector<string> values;
 
     void insert(string key, string value) {
         if (key.length() != 0) {
             char first = key[0];
             string rest = key.substr(1);
-            Itr itr = children.find(first);
-            if (itr == children.end())
-                itr = children.insert(itr, Pair(first, Trie()));
-            itr->second.insert(rest, value);
+            ListTrie *child = find(first);
+            if (child == NULL) {
+                children.push_back(Pair(first, ListTrie()));
+                child = &(children.back().second);
+            }
+            child->insert(rest, value);
         } else {
             values.push_back(value);
         }
+    }
+    ListTrie *find(char key) {
+        for (Itr i = children.begin(); i != children.end(); i++) {
+            if (key == i->first) {
+                return &i->second;
+            }
+        }
+        return NULL;
     }
     vector<string> *search(string key) {
         if (!key.length())
@@ -34,9 +44,9 @@ struct Trie {
                 return NULL;
         char first = key[0];
         string rest = key.substr(1);
-        Itr itr = children.find(first);
-        if (itr != children.end())
-            return itr->second.search(rest);
+        ListTrie *child = find(first);
+        if (child != NULL)
+            return child->search(rest);
         return NULL;
     }
     void common_prefix_search(string query, string key, Entries &results) {
@@ -44,9 +54,9 @@ struct Trie {
             results.push_back(Entry(key, values));
         if (!query.length() || !children.size())
             return;
-        Itr itr = children.find(query.at(0));
-        if (itr != children.end())
-            itr->second.common_prefix_search(query.substr(1), key+query.at(0), results);
+        ListTrie *child = find(query.at(0));
+        if (child != NULL)
+            child->common_prefix_search(query.substr(1), key+query.at(0), results);
     }
     void predictive_search(string query, string key, Entries &results) {
         if (query.length() <= key.length() && values.size())
@@ -55,12 +65,13 @@ struct Trie {
             return;
         if (query.length() > key.length()) {
             char c = query.at(key.length());
-            Itr itr = children.find(c);
-            if (itr != children.end())
-                itr->second.predictive_search(query, key+c, results);
+            ListTrie *child = find(c);
+            if (child != NULL)
+                child->predictive_search(query, key+c, results);
         } else {
-            for (Itr itr = children.begin(); itr != children.end(); itr++)
-                itr->second.predictive_search(query, key+itr->first, results);
+            for (Itr i = children.begin(); i != children.end(); i++) {
+                i->second.predictive_search(query, key+i->first, results);
+            }
         }
     }
     void fuzzy_search(string query, string key, int distance, Entries &results) {
@@ -71,23 +82,24 @@ struct Trie {
 
         // normal match
         if (query.length()) {
-            Itr itr = children.find(query.at(0));
-            if (itr != children.end())
-                itr->second.fuzzy_search(query.substr(1), key+query.at(0), distance, results);
+            ListTrie *child = find(query.at(0));
+            if (child != NULL)
+                child->fuzzy_search(query.substr(1), key+query.at(0), distance, results);
         }
         // edit operation
         if (distance) {
             // insert
-            for (Itr itr = children.begin(); itr != children.end(); itr++)
-                itr->second.fuzzy_search(query, key+itr->first, distance-1, results);
+            for (Itr i = children.begin(); i != children.end(); i++) {
+                i->second.fuzzy_search(query, key+i->first, distance-1, results);
+            }
             if (query.length()) {
                 // delete
                 fuzzy_search(query.substr(1), key, distance-1, results);
 
                 // substitute
-                for (Itr itr = children.begin(); itr != children.end(); itr++) {
-                    if (itr->first != query.at(0))
-                        itr->second.fuzzy_search(query.substr(1), key+itr->first, distance-1, results);
+                for (Itr i = children.begin(); i != children.end(); i++) {
+                    if (i->first != query.at(0))
+                        i->second.fuzzy_search(query.substr(1), key+i->first, distance-1, results);
                 }
             }
             // transpose
@@ -118,13 +130,14 @@ struct Trie {
     void display(string key="") {
         if (values.size() > 0)
             cout << key << "\t" << format(values) << endl;
-        for (Itr itr = children.begin(); itr != children.end(); itr++)
-            itr->second.display(key + itr->first);
+        for (Itr i = children.begin(); i != children.end(); i++) {
+            i->second.display(key + i->first);
+        }
     }
     static string format(Entries entries) {
         string result = "";
         for (int i = 0; i < entries.size(); i++) {
-            Trie::Entry entry = entries.at(i);
+            ListTrie::Entry entry = entries.at(i);
             result += entry.first + "\t";
             for (int j = 0; j < entry.second.size(); j++)
                 result += entry.second.at(j) + " ";
@@ -154,9 +167,10 @@ int main(int argc, char *argv[]) {
         }
     }
     if (filename.length() > 0) {
-        Trie trie;
+        ListTrie trie;
         ifstream ifs(filename.c_str());
         string line, input;
+        cout << "inserting.." << endl;
         while (getline(ifs, line)) {
             size_t pos = line.find('\t');
             if (pos == string::npos)
@@ -165,30 +179,36 @@ int main(int argc, char *argv[]) {
             string value = line.substr(pos+1);
             trie.insert(key, value);
         }
+        cout << "input kana:" << endl;
         while (cin >> input) {
             if (mode == "all" || mode == "search") {
                 vector<string> *result;
                 result = trie.search(input);
-                cout << Trie::format(*result) << endl;
+                cout << "search:" << endl;
+                if (result)
+                    cout << ListTrie::format(*result) << endl;
             }
             if (mode == "all" || mode == "common") {
-                Trie::Entries results;
+                ListTrie::Entries results;
                 trie.common_prefix_search(input, "", results);
-                cout << Trie::format(results);
+                cout << "common:" << endl;
+                cout << ListTrie::format(results);
             }
             if (mode == "all" || mode == "predict") {
-                Trie::Entries results;
+                ListTrie::Entries results;
                 trie.predictive_search(input, "", results);
-                cout << Trie::format(results);
+                cout << "predict:" << endl;
+                cout << ListTrie::format(results);
             }
             if (mode == "all" || mode == "fuzzy") {
-                Trie::Entries results;
+                ListTrie::Entries results;
                 trie.fuzzy_search_ex(input, 3, results);
-                cout << Trie::format(results);
+                cout << "fuzzy:" << endl;
+                cout << ListTrie::format(results);
             }
         }
     } else { 
-        Trie trie;
+        ListTrie trie;
         trie.insert("tree", "value01");
         trie.insert("trie", "value02");
         trie.insert("try", "value03");
@@ -201,30 +221,43 @@ int main(int argc, char *argv[]) {
         { // search
             vector<string> *result;
             result = trie.search("tree");
-            cout << "search:\n" << Trie::format(*result) << endl;
+            cout << "search:" << endl;
+            if (result)
+                cout << ListTrie::format(*result) << endl;
+        }
+        { // search2
+            vector<string> *result;
+            result = trie.search("tree");
+            cout << "search2:" << endl;
+            if (result)
+                cout << ListTrie::format(*result) << endl;
         }
         { // common prefix search
-            Trie::Entries results;
+            ListTrie::Entries results;
             trie.common_prefix_search("tree", "", results);
-            cout << "common:\n" << Trie::format(results);
+            cout << "common:" << endl;
+            cout << ListTrie::format(results);
         }
         { // predictive search
-            Trie::Entries results;
+            ListTrie::Entries results;
             trie.predictive_search("tre", "", results);
-            cout << "predict:\n" << Trie::format(results);
+            cout << "predict:" << endl;
+            cout << ListTrie::format(results);
         }
         { // fuzzy search
-            Trie::Entries results;
+            ListTrie::Entries results;
             trie.fuzzy_search("tree", "", 1, results);
-            cout << "fuzzy:\n" << Trie::format(results);
+            cout << "fuzzy:" << endl;
+            cout << ListTrie::format(results);
         }
         { // fuzzy search 2
-            Trie::Entries results;
+            ListTrie::Entries results;
             trie.fuzzy_search_ex("tree", 2, results);
-            cout << "fuzzy2:\n" << Trie::format(results);
+            cout << "fuzzy2:" << endl;
+            cout << ListTrie::format(results);
         }
         {  // japanese test
-            Trie trie;
+            ListTrie trie;
             trie.insert("にほんご", "日本語");
             trie.insert("にほんじん", "日本人");
             trie.display();

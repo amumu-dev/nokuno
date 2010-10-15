@@ -1,26 +1,27 @@
 #!/bin/env python
-import tweepy, sys
+import tweepy
 from optparse import OptionParser
 
-#account
-username = ""
-password = ""
+#oauth
+consumer_key = ""
+consumer_secret = ""
+access_key = ""
+access_secret = ""
 
 #parse option
 parser = OptionParser()
-parser.add_option("--username", dest="username", default=username)
-parser.add_option("--password", dest="password", default=password)
-parser.add_option("-c", dest="count", type="int", default=20)
+parser.add_option("-c", dest="count", type="int", default=40)
 parser.add_option("-p", dest="page", type="int", default=1)
-parser.add_option("-l", dest="list", help="display list timeline")
-parser.add_option("-u", dest="user", help="display user timeline")
-parser.add_option("-m", dest="mention", action="store_true", help="display mentions")
-parser.add_option("-t", dest="tweet", help="update status")
+parser.add_option("-l", dest="list")
+parser.add_option("-u", dest="user")
+parser.add_option("-m", dest="mention", action="store_true")
+parser.add_option("-t", dest="tweet")
 (o, a) = parser.parse_args()
 
-#setup tweepy
-auth = tweepy.BasicAuthHandler(o.username, o.password)
-api = tweepy.API(auth, secure=True)
+# OAuth 
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_key, access_secret) 
+api = tweepy.API(auth)
 
 #update status if exists -t option
 if o.tweet != None:
