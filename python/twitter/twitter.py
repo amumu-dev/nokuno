@@ -1,12 +1,7 @@
 #!/bin/env python
 import tweepy
 from optparse import OptionParser
-
-#oauth
-consumer_key = ""
-consumer_secret = ""
-access_key = ""
-access_secret = ""
+from ConfigParser import SafeConfigParser
 
 #parse option
 parser = OptionParser()
@@ -16,7 +11,16 @@ parser.add_option("-l", dest="list")
 parser.add_option("-u", dest="user")
 parser.add_option("-m", dest="mention", action="store_true")
 parser.add_option("-t", dest="tweet")
+parser.add_option("-f", dest="file", default="~/.settings/twitter.conf")
 (o, a) = parser.parse_args()
+
+#parse config
+config = SafeConfigParser()
+config.read(o.file)
+consumer_key = config.get("oauth", "consumer_key")
+consumer_secret = config.get("oauth", "consumer_secret")
+access_key = config.get("oauth", "access_key")
+access_secret = config.get("oauth", "access_secret")
 
 # OAuth 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
