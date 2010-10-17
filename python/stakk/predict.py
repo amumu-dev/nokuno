@@ -62,7 +62,9 @@ if __name__ == '__main__':
     parser.add_option("-c", dest="connection", default="data/mozc-connection.txt")
     parser.add_option("-t", dest="threshold", type="int", default=2)
     (options, args) = parser.parse_args()
+    print "building trie.."
     predictor = Predictor(options.dictionary, options.connection)
+    print "input in hiragana"
 
     #input from stdin
     for line in stdin:
