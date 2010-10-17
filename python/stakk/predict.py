@@ -4,6 +4,7 @@ from sys import stdin
 from optparse import OptionParser
 from format import format
 from trie import Trie
+from math import log
 
 #candidate entry
 class Entry:
@@ -48,7 +49,7 @@ class Predictor:
         for yomi, values in results:
             for word, lid, rid, cost in values:
                 total = cost + self.connection[lid]
-                rank = total
+                rank = total - int(1000 * log(1 + len(yomi) - len(input)))
                 entry = Entry(yomi, word, lid, rid, cost, rank)
                 entries.append(entry)
         entries.sort(key=lambda x:x.rank)
