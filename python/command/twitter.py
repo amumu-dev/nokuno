@@ -1,7 +1,8 @@
-#!/bin/env python
+#!/usr/bin/env python
 import tweepy
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
+from os.path import expanduser
 
 #parse option
 parser = OptionParser()
@@ -11,7 +12,7 @@ parser.add_option("-l", dest="list")
 parser.add_option("-u", dest="user")
 parser.add_option("-m", dest="mention", action="store_true")
 parser.add_option("-t", dest="tweet")
-parser.add_option("-f", dest="file", default="~/.settings/twitter.conf")
+parser.add_option("-f", dest="file", default=expanduser("~/.settings/twitter.conf"))
 (o, a) = parser.parse_args()
 
 #parse config

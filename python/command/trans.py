@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 from optparse import OptionParser
+from ConfigParser import SafeConfigParser
 from urllib import quote, urlopen
 from time import sleep
 from sys import exit
-from ConfigParser import SafeConfigParser
+from os.path import expanduser
 
 parser = OptionParser()
 parser.add_option("-f", dest="filename")
@@ -17,7 +18,7 @@ parser.add_option("-w", dest="work", action="store_true")
 parser.add_option("-d", dest="debug", action="store_true")
 parser.add_option("-o", dest="open", action="store_true")
 parser.add_option("-r", dest="response", action="store_true")
-parser.add_option("-c", dest="config", default="~/.settings/trans.conf")
+parser.add_option("-c", dest="config", default=expanduser("~/.settings/trans.conf"))
 (options, args) = parser.parse_args()
 
 if options.base:
