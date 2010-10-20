@@ -8,7 +8,7 @@ from os.path import expanduser
 
 parser = OptionParser()
 parser.add_option("-f", dest="filename")
-parser.add_option("-n", dest="name", default="test")
+parser.add_option("-n", dest="name")
 parser.add_option("-l", dest="line", type="int", default=10)
 parser.add_option("-t", dest="time", type="int", default=5)
 parser.add_option("-m", dest="maximum", type="int", default=2000)
@@ -27,6 +27,10 @@ else:
     config = SafeConfigParser()
     config.read(options.config)
     base = config.get("trans", "base")
+
+if not options.filename or not options.name:
+    print "usage: trans -f filename -n name [options]"
+    exit()
 
 contents = open(options.filename).readlines()
 
