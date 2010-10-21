@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <cstdlib>
 #include "list_trie_wide.h"
 
-#include <cstdlib>
+//global
+string filename, mode = "all";
+ListTrieWide trie;
 
-//ワイド文字列からマルチバイト文字列
-//ロケール依存
+//wide to multi
 void narrow(const std::wstring &src, std::string &dest) {
     char *mbs = new char[src.length() * MB_CUR_MAX + 1];
     wcstombs(mbs, src.c_str(), src.length() * MB_CUR_MAX + 1);
@@ -17,8 +17,7 @@ void narrow(const std::wstring &src, std::string &dest) {
     delete [] mbs;
 }
 
-//マルチバイト文字列からワイド文字列
-//ロケール依存
+//multi to wide
 void widen(const std::string &src, std::wstring &dest) {
     wchar_t *wcs = new wchar_t[src.length() + 1];
     mbstowcs(wcs, src.c_str(), src.length() + 1);
@@ -26,14 +25,9 @@ void widen(const std::string &src, std::wstring &dest) {
     delete [] wcs;
 }
 
-
-int main(int argc, char *argv[]) {
-    // trieを読み込み
+//parse option
+void parse_option(int argc, char *argv[]) {
     int result;
-    string filename, mode = "all";
-    setlocale(LC_CTYPE, "");
-    locale::global(locale(""));
-
     while((result = getopt(argc, argv, "f:m:")) != -1) {
         switch(result) {
             case 'f':
@@ -44,7 +38,9 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
-    ListTrieWide trie;
+}
+//load trie
+void load_trie() {
     if (filename.length() > 0) {
         wifstream ifs(filename.c_str());
         wstring line, input;
@@ -69,15 +65,12 @@ int main(int argc, char *argv[]) {
         trie.display();
     }
 
-    // ソケット通信
+}
+//socket communication
+int communicate() {
     int sock0;
     struct sockaddr_in addr;
-    struct sockaddr_in client;
-    socklen_t len;
-    int sock;
     int yes = 1;
-
-    char inbuf[2048];
 
     sock0 = socket(AF_INET, SOCK_STREAM, 0);
     if (sock0 < 0) {
@@ -89,8 +82,7 @@ int main(int argc, char *argv[]) {
     addr.sin_port = htons(12345);
     addr.sin_addr.s_addr = INADDR_ANY;
 
-    setsockopt(sock0,
-            SOL_SOCKET, SO_REUSEADDR, (const char *)&yes, sizeof(yes));
+    setsockopt(sock0, SOL_SOCKET, SO_REUSEADDR, (const char *)&yes, sizeof(yes));
 
     if (bind(sock0, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
         perror("bind");
@@ -102,14 +94,17 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    //main loop
     while (1) {
-        len = sizeof(client);
-        sock = accept(sock0, (struct sockaddr *)&client, &len);
+        struct sockaddr_in client;
+        socklen_t len = sizeof(client);
+        int sock = accept(sock0, (struct sockaddr *)&client, &len);
         if (sock < 0) {
             perror("accept");
             break;
         }
 
+        char inbuf[2048];
         memset(inbuf, 0, sizeof(inbuf));
         recv(sock, inbuf, sizeof(inbuf), 0);
         wstring input;
@@ -117,7 +112,7 @@ int main(int argc, char *argv[]) {
         widen(multi, input);
         wcout << L"input: " << input << endl;
 
-        // trieを検索してレスポンスを生成
+        //query trie and generate response
         wstring response = L"";
         if (mode == "all" || mode == "search") {
             vector<wstring> *result;
@@ -148,8 +143,20 @@ int main(int argc, char *argv[]) {
 
         close(sock);
     }
-
     close(sock0);
-
     return 0;
+}
+//main logic
+int main(int argc, char *argv[]) {
+    // set locale
+    setlocale(LC_CTYPE, "");
+    locale::global(locale(""));
+
+    parse_option(argc,argv);
+
+    load_trie();
+
+    int result = communicate();
+
+    return result;
 }
