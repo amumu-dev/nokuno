@@ -9,7 +9,14 @@ PROMPT2='> '
 RPROMPT=''
 
 # Alias
-alias ls='ls -F --color=auto'
+case "${OSTYPE}" in
+freebsd*|darwin*)
+alias ls="ls -FG"
+;;
+linux*)
+alias ls="ls -F --color=auto"
+;;  
+esac
 alias ll='ls -lh'
 alias la='ls -lha'
 alias lt='ls -lht'
