@@ -3,20 +3,23 @@ if [ -f /etc/zshrc ]; then
     . /etc/zshrc
 fi
 
-# Prompt
-PROMPT="[%m %~] $ "
-PROMPT2='> '
-RPROMPT=''
-
-# Alias
+# depends OSTYPE
 case "${OSTYPE}" in
 freebsd*|darwin*)
+path=(/opt/local/bin $path)
 alias ls="ls -FG"
 ;;
 linux*)
 alias ls="ls -F --color=auto"
 ;;  
 esac
+
+# Prompt
+PROMPT="[%m %~] $ "
+PROMPT2='> '
+RPROMPT=''
+
+# Alias
 alias ll='ls -lh'
 alias la='ls -lha'
 alias lt='ls -lht'

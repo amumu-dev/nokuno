@@ -25,6 +25,7 @@ au BufRead,BufNew * match JpSpace /　/
 
 " syntax color
 syntax on
+" set t_Co=256
 
 " statusline
 highlight LineNr ctermfg=darkgrey
