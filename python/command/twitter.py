@@ -6,7 +6,7 @@ from os.path import expanduser
 
 #parse option
 parser = OptionParser()
-parser.add_option("-c", dest="count", type="int", default=40)
+parser.add_option("-c", dest="count", type="int", default=20)
 parser.add_option("-p", dest="page", type="int", default=1)
 parser.add_option("-l", dest="list")
 parser.add_option("-u", dest="user")
