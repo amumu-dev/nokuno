@@ -27,11 +27,12 @@ int main() {
     string multi = "あいうえお";
     wstring wide;
     widen(multi, wide);
-    //wcout << wide << endl;
+    wcout << wide << endl;
     
     //wide to multi;
     wide = L"日本語テスト";
     narrow(wide, multi);
     cout << multi << endl;
-    cout << MB_CUR_MAX << endl;
+    cout << "MB_CUR_MAX: " << MB_CUR_MAX << endl;
+    cout << "sizeof(wchar_t): " << sizeof(wchar_t) << endl;
 }
