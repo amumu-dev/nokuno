@@ -1,5 +1,7 @@
 #include <iostream>
 #include <sys/types.h>
+#include <vector>
+#include <string>
 using namespace std;
 
 // Table of UTF-8 character lengths, based on first byte
@@ -51,12 +53,26 @@ void SubString(const string &src,
 
   return;
 }
+
+vector<string> split(string input) {
+    vector <string> result;
+    const char *p = input.c_str();
+    for (int i=0; i<input.length(); i+=OneCharLen(p+i)) {
+        result.push_back(input.substr(i, OneCharLen(p+i)));
+    }
+    return result;
+}
+
 int main() {
     string input;
     while (getline(cin, input)) {
         cout << "CharLen: " << CharsLen(input.c_str(), input.length()) << endl;
         for (int i = 0; i < input.length(); i++) {
             cout << "OneCharLen " << i << ": " << (int)OneCharLen(input.c_str()+i) << endl;
+        }
+        vector<string> splited = split(input);
+        for (int i = 0; i < splited.size(); i++) {
+            cout << "Split: " << splited[i] << endl;
         }
         string result;
         SubString(input, 1, 4, &result);
