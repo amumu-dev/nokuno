@@ -6,26 +6,17 @@ using namespace std;
 // SRM 204 Level One
 class Medici {
     public:
-        int winner(int fame[], int fortune[], int secrets[], size_t size, bool debug = false) {
-            int score[size];
-            for (int i=0; i<size; i++) {
-                score[i] = fame[i];
-                if (score[i] > fortune[i])
-                    score[i] = fortune[i];
-                if (score[i] > secrets[i])
-                    score[i] = secrets[i];
-                if (debug)
-                    cout << score[i] << endl;
-            }
+        int winner(int fame[], int fortune[], int secrets[], size_t size) {
             int maximum = 0;
             int result = 0;
             bool draw = false;
             for (int i=0; i<size; i++) {
-                if (score[i] > maximum) {
+                int score = min(fame[i], min(fortune[i], secrets[i]));
+                if (score > maximum) {
                     result = i;
-                    maximum = score[i];
+                    maximum = score;
                     draw = false;
-                } else if (score[i] == maximum) {
+                } else if (score == maximum) {
                     draw = true;
                 }
             }
