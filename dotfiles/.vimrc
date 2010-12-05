@@ -42,6 +42,8 @@ set autoindent
 set showmatch
 set backspace=indent,eol,start
 set smartindent
+filetype plugin on
+filetype plugin indent on
 autocmd FileType python setl smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
 
 " tab
