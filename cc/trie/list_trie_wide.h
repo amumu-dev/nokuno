@@ -1,13 +1,17 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <map>
-using namespace std;
+#ifndef LIST_TRIE_WIDE_H
+#define LIST_TRIE_WIDE_H
 
 struct ListTrieWide {
-    typedef pair<wstring, vector<wstring> > Entry;
+    struct Entry {
+        wstring key;
+        int distance;
+        vector<wstring> values;
+        Entry(wstring _key, int _distance, vector<wstring> _values) {
+            key = _key;
+            distance = _distance;
+            values = _values;
+        }
+    };
     typedef vector<Entry> Entries;
     typedef pair<wchar_t, ListTrieWide> Pair;
     typedef list<Pair>::iterator Itr;
@@ -51,7 +55,7 @@ struct ListTrieWide {
     }
     void common_prefix_search(wstring query, wstring key, Entries &results) {
         if (values.size())
-            results.push_back(Entry(key, values));
+            results.push_back(Entry(key, 0, values));
         if (!query.length() || !children.size())
             return;
         ListTrieWide *child = find(query.at(0));
@@ -60,7 +64,7 @@ struct ListTrieWide {
     }
     void predictive_search(wstring query, wstring key, Entries &results) {
         if (query.length() <= key.length() && values.size())
-            results.push_back(Entry(key, values));
+            results.push_back(Entry(key, 0, values));
         if (!children.size())
             return;
         if (query.length() > key.length()) {
@@ -76,7 +80,7 @@ struct ListTrieWide {
     }
     void fuzzy_search(wstring query, wstring key, int distance, Entries &results) {
         if (!query.length() && values.size())
-            results.push_back(Entry(key, values));
+            results.push_back(Entry(key, distance, values));
         if (!children.size())
             return;
 
@@ -118,8 +122,11 @@ struct ListTrieWide {
             Entry entry = entries.at(i);
             bool flag = false;
             for (int j = 0; j < results.size(); j++) {
-                if (entry.first == results.at(j).first) {
+                if (entry.key == results.at(j).key) {
+                    if (entry.distance > results.at(j).distance)
+                        results[j] = entry;
                     flag = true;
+                    break;
                 }
             }
             if (!flag) {
@@ -134,22 +141,38 @@ struct ListTrieWide {
             i->second.display(key + i->first);
         }
     }
+    void load_dictionary(string filename) {
+        wifstream ifs(filename.c_str());
+        wstring line;
+        while (getline(ifs, line)) {
+            size_t pos = line.find('\t');
+            if (pos == wstring::npos)
+                continue;
+            wstring key = line.substr(0, pos);
+            wstring value = line.substr(pos+1);
+            insert(key, value);
+        }
+        ifs.close();
+    }
     static wstring format(Entries entries) {
         wstring result = L"";
         for (int i = 0; i < entries.size(); i++) {
             ListTrieWide::Entry entry = entries.at(i);
-            result += entry.first + L"\t";
-            for (int j = 0; j < entry.second.size(); j++)
-                result += entry.second.at(j) + L" ";
-            result += L"\n";
+            for (int j = 0; j < entry.values.size(); j++) {
+                wchar_t buffer[256];
+                swprintf(buffer, sizeof(buffer)/sizeof(wchar_t), L"%d", entry.distance);
+                result += entry.key + L"\t" + buffer + L"\t" + entry.values.at(j) + L"\n";
+            }
         }
         return result;
     }
-    static wstring format(vector<wstring> entries) {
+    static wstring format(vector<wstring> values) {
         wstring result = L"";
-        for (int i = 0; i < entries.size(); i++)
-            result += entries.at(i) + L" ";
+        for (int i = 0; i < values.size(); i++)
+            result += values.at(i) + L"\n";
         return result;
     }
 };
+
+#endif
 
