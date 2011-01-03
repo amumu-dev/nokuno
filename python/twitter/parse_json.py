@@ -3,8 +3,7 @@
 import sys, json
 
 for line in sys.stdin:
-    if len(line) > 3:
-        twit = json.loads(line)
-        #print twit['user']['screen_name'], twit['text']
-        print twit['text'].encode('utf-8')
+    tweet = json.loads(line)
+    if 'text' in tweet:
+        print tweet['text'].encode('utf-8')
 

@@ -12,7 +12,7 @@ def main():
     parser.add_option("-p", dest="password")
     (o, a) = parser.parse_args()
     stream = tweepy.Stream(o.username, o.password, StreamListener())
-    stream.filter(track=['twitter'])
+    stream.sample()
 
 if __name__ == "__main__":
     main()
