@@ -1,0 +1,102 @@
+@charset "utf-8";	
+/* 全体 */
+* {
+	padding: 0px;
+	margin: 0px;
+}
+body {
+	font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, "MSPゴシック", "MS PGothic", sans-serif;
+	font-size: 100%;
+	color: #000;
+	text-align: center;
+	background-color: #FFF;
+	background-image: url(data/bg.png);
+	background-repeat: repeat-x;
+	border: none;
+}
+#main {
+	background-color: #FFF;
+	width: 900px;
+	margin: 0px auto 0px 50px;
+	text-align: left;
+}
+/* ヘッダ */
+#banner {
+	width: 900px;
+	height: 120px;
+}
+
+/* メニュー */
+#menu {
+	padding: 10px 30px;
+	margin: 0px;
+}
+#menu a {
+	width: 153px;
+	padding: 5px auto;
+	background-color:#FEC;
+	border: 2px solid #FFF;
+	
+	font-size: 90%;
+	color: #C60;
+	text-align: center;
+	text-decoration: none;
+	display: block;
+	float: left;
+}
+#menu a:hover {
+	background-color:#FFF;
+}
+/* 本体 */
+#contents {
+	padding: 10px 30px;
+	background-color: #FFF;
+	clear: both;
+}
+/* フッター */
+#footer {
+	margin: 10px 30px;
+	text-align: center;
+}
+#footer a {
+	margin: 0px 10px;
+	color: #06C;
+}
+
+/* 見出し */
+h2 {
+	color: #666;
+	font-size: 120%;
+	font-weight: bold;
+	border-style: solid;
+	border-width: 0px 0px 2px 10px;
+	border-color: #FEB;
+	padding: 10px 5px 5px 20px;
+	margin: 10px 0px;
+	clear: both;
+}
+h3 {
+	font-size: 90%;
+	margin: 10px 0px;
+}
+/* 段落 */
+p {
+	font-size: 90%;
+	line-height: 2;
+	padding: 0px;
+	margin: 10px 0px;
+	height: auto;
+}
+/* 画像 */
+img {
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+/* リンク */
+a {
+	color : #A84;
+}
+a:hover {
+	color : #40F;
+}

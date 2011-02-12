@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="style.css" type="text/css" />
+<link rel="stylesheet" href="compose.css" type="text/css" />
+<script type="text/javascript" src="prototype.js" ></script>
+<script type="text/javascript" src="jquery.js" ></script>
+<script type="text/javascript" src="JSMML.js"></script>
+<script type="text/javascript" src="pianoroll.js" ></script>
+<script type="text/javascript" src="convert.js" ></script>
+<title>ソーシャル作曲サイト「Picoly Composer」</title>
+</head>
+
+<body onload="init(3,6);">
+<div id="main">
+<h1 id="banner">
+    <a href="./">
+	    <img id="banner" src="data/picoly.png" alt="ソーシャル作曲サイト「Picoly Composer」" />
+    </a>
+</h1>
+<!--
+<div id="menu">
+	<a href="#">作曲する</a>
+	<a href="#">曲を聴く</a>
+</div>
+-->
+<div id="contents">
+    <a id="play_button">再生</a>
+	<div id="pianoroll"></div>
+    
+    <form id="mml-form" action="./">
+    	<label >MML: </label><input id="mml-text" type="text" size="120" />
+    </form>
+    <!--
+	<h2>Picolyってなあに？</h2>
+	<p>
+	Picoly Composerは、世界初のソーシャル作曲サイトです。
+	その名の通り「Picoly（ピコピコした）」な音を使って、ブラウザ上で簡単に作曲をすることができます。
+	Picolyを使えば、高価な楽器を買ったり、ソフトをインストールする必要もありません。
+	いますぐ、だれでも、無料で、音楽の創作を楽しむことができるのです。
+	</p>
+    -->
+</div>
+<div id="footer">
+</div>
+</div>
+</body>
+</html>

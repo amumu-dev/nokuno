@@ -1,0 +1,45 @@
+@charset "utf-8";
+
+#pianoroll {
+	border: 1px solid #000;
+	width: 822px;
+	height: 432px;
+}
+.raw {
+	width: 820px;
+	height: 144px;
+}
+.block {
+	border-width: 1px 0px 0px 1px;
+	border-style: solid;
+	border-color: #000;
+	width: 120px;
+	height: 144px;
+	position: absolute;
+}
+.grid {
+	border-width: 1px 0px 0px 1px;
+	border-style: solid;
+	border-color: #CCC;
+	width: 30px;
+	height: 12px;
+	position: absolute;
+	background: none;
+}
+.black .grid {	
+	border-width: 1px 0px 0px 1px;
+	border-style: solid;
+	border-color: #FBA;
+	background-color: #FEC;
+}
+.bar {
+	width: 28px;
+	height: 10px;
+	background-color:#C90;
+	position: absolute;
+	border: 1px solid #000;
+}
+#mml-form {
+	font-size: 100%;
+	margin: 10px 0px;
+}
