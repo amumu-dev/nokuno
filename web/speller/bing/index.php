@@ -20,7 +20,7 @@ $values[] = $query;
 if (count($values) > 0) {
     $prob = 1.0 / count($values);
     foreach ($values as $value) {
-        echo "$value\t$prob";
+        echo "$value\t$prob\n";
     }
 } else {
     echo "$query\t1.0\n";
