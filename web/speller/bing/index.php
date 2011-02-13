@@ -15,11 +15,12 @@ $xml = simplexml_load_file($url);
 $xml->registerXPathNamespace('spl', $ns);
 //print_r($xml);
 $values = $xml->xpath('//spl:Value');
+$values[] = $query;
 if (count($values) > 0) {
     $prob = 1.0 / count($values);
     foreach ($values as $value) {
         echo "$value\t$prob";
     }
 } else {
-    echo "$query\t\n";
+    echo "$query\t1\n";
 }
