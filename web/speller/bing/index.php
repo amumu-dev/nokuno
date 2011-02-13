@@ -1,11 +1,11 @@
 <?php
-if (!isset($argc)) {
+if (isset($_GET['q'])) {
     header("Content-Type: text/plain");
     $query = $_GET['q'];
-} if ($argc < 2) {
-    $query = "cofee";
-} else {
+} else if ($argc >= 2) {
     $query = $argv[1];
+} else {
+    $query = "cofee";
 }
 $appid = "5061CD1C64F6015A128E51FE1FDFDC3B18D0610A";
 $base = "http://api.search.live.net/xml.aspx";
