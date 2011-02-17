@@ -26,7 +26,9 @@ recall_sum = 0
 for key in dic.keys():
     url = options.url + '?' + urllib.urlencode({'q':key})
     for line in urllib.urlopen(url):
-        (cand, prob) = line.strip().split("\t", 1)
+        pair = line.strip().split("\t", 1)
+        if len(pair) != 2: continue
+        (cand, prob) = pair
         prob = float(prob)
         if cand in dic[key]:
             precision_sum += prob
