@@ -37,8 +37,9 @@ for key in dic.keys():
 # output evaluate
 ep = precision_sum / len(dic)
 er = recall_sum / len(dic)
-ef1 = 1/(0.5*(1/ep+1/er))
 
 print "EP:", ep
 print "ER:", er
+
+ef1 = 1/(0.5*(1/ep+1/er))
 print "EF1:", ef1
