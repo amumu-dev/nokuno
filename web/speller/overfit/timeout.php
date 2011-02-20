@@ -8,7 +8,7 @@ $dictionary2 = array();
 $n = 0;
 foreach ($dataset as $line) {
     $keyvalue = explode("\t", trim($line), 2); 
-    if ($n < 10)
+    if ($n < 0)
         $dictionary[$keyvalue[0]] = $keyvalue[1];
     else
         $dictionary2[$keyvalue[0]] = $keyvalue[1];
@@ -21,7 +21,7 @@ if (array_key_exists($query, $dictionary)) {
     foreach ($candidates as $cand) {
         echo "$cand\t0.0\n";
     }
-} else if (array_key_exists($query, $dictionary)) {
+} else if (array_key_exists($query, $dictionary2)) {
     sleep(120);
 } else {
     echo "$query\t1.0\n";
