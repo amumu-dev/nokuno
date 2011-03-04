@@ -1,4 +1,4 @@
-#!/usr/bin/enb python
+#!/usr/bin/env python
 import sys
 
 N = int(sys.stdin.readline())
