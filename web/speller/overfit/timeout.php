@@ -23,6 +23,7 @@ if (array_key_exists($query, $dictionary)) {
     }
 } else if (array_key_exists($query, $dictionary2)) {
     sleep(120);
+    echo "$query\t1.0\n";
 } else {
     echo "$query\t1.0\n";
 }
