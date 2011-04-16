@@ -4,7 +4,7 @@ using namespace std;
 const size_t N = 4, D = 2, K = 2;
 double data[N][D] = {{0,0}, {1,1}, {10,10}, {9,11}};
 
-double distance(double *a, double *b) {
+double distance(double a[D], double b[D]) {
   double result = 0.0;
   for (size_t i = 0; i < D; i++) {
     result += (a[i] - b[i]) * (a[i] - b[i]);
@@ -47,7 +47,7 @@ int main() {
     }
   }
   // output cluster number
-  for (int i = 0; i < N; i++) {
+  for (size_t i = 0; i < N; i++) {
     cout << i << ": " << cluster[i] << endl;
   }
   return 0;
