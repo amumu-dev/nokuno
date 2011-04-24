@@ -23,9 +23,9 @@ typedef long long ll;
 class HealthFood {
 public:
   vector <int> selectMeals(vector <int> protein, vector <int> carbs, vector <int> fat, vector <string> dietPlans) {
-    size_t size = protein.size();
+    int size = protein.size();
     vector <int> calories(size, 0);
-    for (size_t i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) {
       calories[i] = protein.at(i) * 5 + carbs.at(i) * 5 + fat.at(i) * 9;
     }
     vector <vector <int> > dietInfo;
@@ -35,37 +35,37 @@ public:
     dietInfo.push_back(calories);
 
     vector <int> result;
-    for (size_t i = 0; i < dietPlans.size(); i++) {
+    for (int i = 0; i < (int)dietPlans.size(); i++) {
       int meal = selectOneMeal(dietInfo, dietPlans.at(i));
       result.push_back(meal);
     }
-    cout << endl;
+    //cout << endl;
     return result;
   }
   int selectOneMeal(vector <vector <int> > &dietInfo, string& dietPlan) {
     int result = 0;
-    for (int i = 1; i < dietInfo[0].size(); i++) {
+    for (int i = 1; i < (int)dietInfo[0].size(); i++) {
       if (compareMeal(dietInfo, dietPlan, result, i) > 0) {
         result = i;
       }
     }
-    cout << result << " ";
+    //cout << result << " ";
     return result;
   }
   int compareMeal(vector <vector <int> > &dietInfo, string& dietPlan, int a, int b) {
-    for (size_t i = 0; i < dietPlan.size(); i++) {
+    for (int i = 0; i < (int)dietPlan.size(); i++) {
       char c = dietPlan.at(i);
-      pair<int, int> code = dietCode(c);
+      pair<bool, int> code = dietCode(c);
       //cout << i << " " << code.first << " " << code.second << endl;
       int diff = dietInfo[code.second][a] - dietInfo[code.second][b];
       if (diff == 0)
         continue;
-      return ((diff>0) == (code.first==1)) ? -1 : 1;
+      return ((diff>0) == code.first) ? -1 : 1;
     }
     return 0;
   }
-  pair<int,int> dietCode(char c) {
-    pair<int, int> result;
+  pair<bool,int> dietCode(char c) {
+    pair<bool, int> result;
     result.first = isupper(c);
     switch (toupper(c)) {
       case 'P':
