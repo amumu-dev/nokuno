@@ -4,7 +4,7 @@
 #include "shuffle.h"
 
 int hire(std::vector<int> &candidates) {
-  int result = 0;
+  int result = 1;
   int best = 0;
   for (int i = 1; i < (int)candidates.size(); i++) {
     if (candidates[i] > candidates[best]) {
@@ -22,7 +22,6 @@ int test_hire(int m) {
   shuffle<int>(candidates);
   return hire(candidates);
 }
-
 int max_hire(int n, int m) {
   int result = 0;
   for (int j = 0; j < n; j++) {
@@ -31,5 +30,12 @@ int max_hire(int n, int m) {
       result = hired;
   }
   return result;
+}
+double average_hire(int n, int m) {
+  double result = 0.0;
+  for (int j = 0; j < n; j++) {
+    result += test_hire(m);
+  }
+  return result / n;
 }
 #endif

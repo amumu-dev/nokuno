@@ -4,6 +4,8 @@ using namespace std;
 
 int main() {
   srand(time(NULL)); rand();
-  cout << max_hire(10000, 100) << endl;
+  for (int i = 0; i < 100; i++) {
+    cout << average_hire(1000, i) << endl;
+  }
   return 0;
 }
