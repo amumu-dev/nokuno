@@ -27,3 +27,5 @@ rhel.4.5.package
 # etc
 *.core
 *.tmp
+*.out
+*.cgi
