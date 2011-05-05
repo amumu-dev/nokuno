@@ -37,7 +37,7 @@ for key in dic.keys():
             recall_sum += 1.0 / len(dic[key])
 
 # output evaluate
-latency = (time() - start) / len(dic)
+latency = (time.time() - start) / len(dic)
 print "latency(s):", latency
 
 ep = precision_sum / len(dic)
