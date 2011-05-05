@@ -37,6 +37,8 @@ for key in dic.keys():
         if cand in dic[key]:
             precision_sum += prob
             recall_sum += 1.0 / len(dic[key])
+            index = dic[key].index(cand)
+            dic[key][index] = "___delited___"
 
 # output evaluate
 print "total_size(byte):", total_size
