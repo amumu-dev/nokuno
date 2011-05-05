@@ -14,13 +14,11 @@ start = time.time()
 
 # load dictionary
 dic = {}
-correct_num = 0
 for line in open(options.file):
     line = line.strip().split("\t")
     key = line[0]
     values = line[1:]
     dic[key] = values
-    correct_num += len(values)
 
 # evaluate speller
 precision_sum = 0
@@ -28,17 +26,26 @@ recall_sum = 0
 total_size = 0
 for key in dic.keys():
     url = options.url + '?' + urllib.urlencode({'q':key})
+    precision_numerator = 0.0
+    precision_denominator = 0.0
+    recall_numerator = 0.0
+    recall_denominator = len(dic[key])
     for line in urllib.urlopen(url):
         total_size += len(line)
-        pair = line.strip().split("\t", 1)
+        pair = line[:-1].split("\t", 1)
         if len(pair) != 2: continue
         (cand, prob) = pair
         prob = float(prob)
+        precision_denominator += prob
         if cand in dic[key]:
-            precision_sum += prob
-            recall_sum += 1.0 / len(dic[key])
+            precision_numerator += prob
+            recall_numerator += 1.0
             index = dic[key].index(cand)
             dic[key][index] = "___delited___"
+    precision = precision_numerator / precision_denominator
+    precision_sum += precision
+    recall = recall_numerator / recall_denominator
+    recall_sum += recall
 
 # output evaluate
 print "total_size(byte):", total_size
