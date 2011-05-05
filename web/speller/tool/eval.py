@@ -25,9 +25,11 @@ for line in open(options.file):
 # evaluate speller
 precision_sum = 0
 recall_sum = 0
+total_size = 0
 for key in dic.keys():
     url = options.url + '?' + urllib.urlencode({'q':key})
     for line in urllib.urlopen(url):
+        total_size += len(line)
         pair = line.strip().split("\t", 1)
         if len(pair) != 2: continue
         (cand, prob) = pair
@@ -37,6 +39,8 @@ for key in dic.keys():
             recall_sum += 1.0 / len(dic[key])
 
 # output evaluate
+print "total_size(byte):", total_size
+
 latency = (time.time() - start) / len(dic)
 print "latency(s):", latency
 
@@ -48,3 +52,4 @@ print "ER:", er
 
 ef1 = 1/(0.5*(1/ep+1/er))
 print "EF1:", ef1
+
