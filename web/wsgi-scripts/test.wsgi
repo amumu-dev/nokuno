@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #encoding: utf-8
+import sys
 
 def application(environ, start_response):
     status = '200 OK'
-    #output = "Hello World!\n"
-    output = str(environ)
+    output = str(environ) + "\n" + str(sys.version_info)
     response_headers = [('Content-type', 'text/plain'),
                         ('Content-Length', str(len(output)))]
     start_response(status, response_headers)
