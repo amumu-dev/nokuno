@@ -24,12 +24,14 @@ for line in open(options.file):
 precision_sum = 0
 recall_sum = 0
 total_size = 0
+max_latency = 0
 for key in dic.keys():
     url = options.url + '?' + urllib.urlencode({'q':key})
     precision_numerator = 0.0
     precision_denominator = 0.0
     recall_numerator = 0.0
     recall_denominator = len(dic[key])
+    current_start = time.time()
     for line in urllib.urlopen(url):
         total_size += len(line)
         pair = line[:-1].split("\t", 1)
@@ -42,6 +44,8 @@ for key in dic.keys():
             recall_numerator += 1.0
             index = dic[key].index(cand)
             dic[key][index] = "___delited___"
+    current_latency = time.time() - current_start
+    max_latency = max(max_latency, current_latency)
     precision = precision_numerator / precision_denominator
     precision_sum += precision
     recall = recall_numerator / recall_denominator
@@ -50,8 +54,9 @@ for key in dic.keys():
 # output evaluate
 print "total_size(byte):", total_size
 
-latency = (time.time() - start) / len(dic)
-print "latency(s):", latency
+average_latency = (time.time() - start) / len(dic)
+print "average_latency(s):", average_latency
+print "max_latency(s):", max_latency
 
 ep = precision_sum / len(dic)
 er = recall_sum / len(dic)
