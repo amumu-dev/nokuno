@@ -15,6 +15,8 @@ def consistent(word, current):
     for i in range(len(current)):
         if current[i] != '_' and current[i] != word[i]:
             return False
+        if current[i] == '_' and word[i] in previous:
+            return False
     return True
 
 def valid(character, dictionary, current):
@@ -50,10 +52,6 @@ for x in range(1, T+1):
     for l in range(M):
         list = sys.stdin.readline().strip()
         maximum = -1
-        #for word in dictionary:
-        #    s = score(word, dictionary, list)
-        #    if s > maximum:
-        #        answer = word
         answer = max(dictionary, key=lambda x: score(x, dictionary, list))
         result.append(answer)
     print "Case #%d: %s" % (x, ' '.join(result))
