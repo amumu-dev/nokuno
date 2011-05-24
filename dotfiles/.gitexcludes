@@ -29,3 +29,4 @@ rhel.4.5.package
 *.tmp
 *.out
 *.cgi
+data/
