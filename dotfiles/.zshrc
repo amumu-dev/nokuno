@@ -6,7 +6,7 @@ fi
 # depends OSTYPE
 case "${OSTYPE}" in
 freebsd*|darwin*)
-path=(/opt/local/bin $path)
+path=(/opt/local/bin /usr/texbin $path)
 alias ls="ls -FG"
 ;;
 linux*)
