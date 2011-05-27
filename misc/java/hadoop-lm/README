@@ -1,0 +1,71 @@
+hadoop-lm: Hadoop Language Modeling Toolkit
+
+hadoop-lm is a natural language processing library for large scale corpus with Hadoop MapReduce.
+
+Currently, only word N-gram language model is supported.
+
+* Build
+make
+
+* Usage
+Usage:
+    hadoop jar ngram-count.jar [-files vocabulary.txt] -i INPUT_PATH -o OUTPUT_PATH [options]
+Options:
+    -f     format :      text(default), sequence
+    -a     all-gram      default: false
+    -p     stripes       default: false
+    -e     encode:       default: UTF-8
+    -n     ngram num:    default: 3
+    -r     reducer num : default: 10
+    -t     threshold:    default: 10
+    -c     cthreshold:   default: 0
+    -s     split:        default: 0
+    -m     memory:       default: 0
+    -l     limit:        default: 10000
+    -h     print help
+
+* N-gram Counting
+There are roughly two types of N-gram counting method:
+
+- Simple
+- Optimized
+
+Simple is easy way to counting N-grams. Optimized is more efficient but complicated way.
+
+
+* Simple N-gram Counting
+This method is used by default. Mapper emits each (N-gram, Count) pair like this:
+
+"Thank you", 100
+"Good morning", 50
+"Language Model", 1
+
+-n option means N of N-gram.
+-a option allows mappers to emit all N-gram, that means, 1-gram to N-gram.
+-t option sets threshold of cut-off frequency.
+-c option is a bit tricky, meaning 'combine phase cut-off frequency'. If thisn't 0, the result of counting is inaccurate, but might be efficient.
+-s option is used together with -c option, meaning minmum split of input data. This should be large as 1000000000, because small split leads over cut-off in combiner.
+
+
+** Optimized N-gram Counting
+This method will be used with '-p' switch and '-files vocabulary.txt' argument, leading to following optimization techniques.
+
+- Stripes pattern
+- In-mapper combining
+- WordID utilization
+
+1) Stripes pattern
+Stripes pattern is introduced by Jimmy Lin, see his book below.
+http://www.umiacs.umd.edu/~jimmylin/book.html
+
+1-gram count is not supported in this case.
+
+We used the last word of N-gram maps as value, and rest as key like this:
+Key: (N-1)-gram, Values:{Word: Count} maps.
+
+2) In-mapper combining
+Default combiner of Hadoop is not efficient, so use in-mapper combining technique, again proposed by Jimmy Lin's book.
+
+3) WordID utilization
+Word string is translated to an integer ID. This needs a vocabulary file sorted by frequency descent. Please set '-files' option BEFORE other options.
+
