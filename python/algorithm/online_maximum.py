@@ -11,16 +11,16 @@ def online_maximum(k, score):
             return i
     return len(score)-1
 
-score = range(100)
-random.shuffle(score)
-print online_maximum(len(score)/2, score)
+if __name__ == '__main__':
+    for k in range(100):
+        n = 0.
+        total = 0.
+        for i in range(1000):
+            score = range(100)
+            random.shuffle(score)
+            result = online_maximum(k, score)
+            total += score[result]
+            if score[result] == 99:
+                n += 1
+        print '%d,%f,%f' % (k, n / 1000., total / 1000.)
 
-for k in range(100):
-    n = 0.
-    for i in range(1000):
-        score = range(100)
-        random.shuffle(score)
-        result = online_maximum(k, score)
-        if score[result] == 99:
-            n += 1
-    print k, n / 1000.
