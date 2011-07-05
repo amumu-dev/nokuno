@@ -2,18 +2,10 @@
 from collections import defaultdict
 from optparse import OptionParser
 
-def train(corpus, number):
-    pair = defaultdict(float)
-    vocabulary = set()
-    for english, forein in corpus:
-        for e in english.split(" "):
-            for f in forein.split(" "):
-                pair[(e,f)] += 1.
-                vocabulary.add(e)
-
+def em_algorithm(pair, number, size):
     t = defaultdict(float)
     for e,f in pair.keys():    
-        t[(e,f)] = 1. / len(vocabulary)
+        t[(e,f)] = 1. / size
     for loop in range(number):
         count = defaultdict(float)
         total = defaultdict(float)
@@ -27,6 +19,36 @@ def train(corpus, number):
             t[(e,f)] = count[(e,f)] / total[f]
     return t
 
+def train(corpus, number, mode, length):
+    pair = defaultdict(float)
+    vocabulary = set()
+    for english, foreign in corpus:
+        foreign_split = foreign.split(" ")
+        english_split = english.split(" ")
+        if mode == "normal":
+            for e in english_split:
+                for f in foreign_split:
+                    pair[(e,f)] += 1.
+                    vocabulary.add(e)
+        elif mode == "restrict":
+            l = min(len(english_split),len(foreign_split))
+            for i in range(l):
+                e = english_split[i]
+                for j in range(max(0,i-length),min(len(foreign_split),i+1+length)):
+                    f = foreign_split[j]
+                    pair[(e,f)] += 1.
+                vocabulary.add(e)
+        elif mode == "phrase":
+            for l in range(length):
+                for i in range(len(english_split)-l):
+                    for j in range(len(foreign_split)-l):
+                        e = " ".join(english_split[i:i+1+l])
+                        f = " ".join(foreign_split[j:j+1+l])
+                        pair[(e,f)] += 1.
+                        vocabulary.add(e)
+               
+    return em_algorithm(pair, number, len(vocabulary))
+
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("-e", dest="english", default="data/english.txt")
@@ -34,6 +56,8 @@ if __name__ == '__main__':
     parser.add_option("-t", dest="test", action="store_true")
     parser.add_option("-n", dest="number", type="int", default=10)
     parser.add_option("-p", dest="probability", type="float", default=0.01)
+    parser.add_option("-m", dest="mode", default="normal")
+    parser.add_option("-l", dest="length", type="int", default=2)
     (options, args) = parser.parse_args()
 
     if options.test:
@@ -45,7 +69,7 @@ if __name__ == '__main__':
         foreign = [line.strip() for line in open(options.foreign)]
         corpus = zip(english, foreign)
 
-    t = train(corpus, options.number)
+    t = train(corpus, options.number, options.mode, options.length)
 
     for (e,f),p in sorted(t.items(), key=lambda x:-x[1]):
         if p >= options.probability:
