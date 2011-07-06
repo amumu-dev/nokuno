@@ -58,18 +58,29 @@ if __name__ == '__main__':
     parser.add_option("-p", dest="probability", type="float", default=0.01)
     parser.add_option("-m", dest="mode", default="normal")
     parser.add_option("-l", dest="length", type="int", default=2)
+    parser.add_option("-b", dest="bigram")
     (options, args) = parser.parse_args()
 
-    if options.test:
-        corpus = [("the house", "das Haus"), 
-                ("the book", "das Buch"),
-                ("a book", "ein Buch")]
-    else:
-        english = [line.strip() for line in open(options.english)]
-        foreign = [line.strip() for line in open(options.foreign)]
-        corpus = zip(english, foreign)
+    if options.bigram:
+        bigram = {}
+        vocabulary = set()
+        for line in open(options.bigram):
+            (word1, word2, freq) = line.strip().split()
+            bigram[(word1, word2)] = float(freq)
+            vocabulary.add(word1)
+        t = em_algorithm(bigram, options.number, len(vocabulary))
 
-    t = train(corpus, options.number, options.mode, options.length)
+    else:
+        if options.test:
+            corpus = [("the house", "das Haus"), 
+                    ("the book", "das Buch"),
+                    ("a book", "ein Buch")]
+        else:
+            english = [line.strip() for line in open(options.english)]
+            foreign = [line.strip() for line in open(options.foreign)]
+            corpus = zip(english, foreign)
+
+        t = train(corpus, options.number, options.mode, options.length)
 
     for (e,f),p in sorted(t.items(), key=lambda x:-x[1]):
         if p >= options.probability:
