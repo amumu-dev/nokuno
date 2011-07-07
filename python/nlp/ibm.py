@@ -46,14 +46,15 @@ def train(corpus, number, mode, length):
                         f = " ".join(foreign_split[j:j+1+l])
                         pair[(e,f)] += 1.
                         vocabulary.add(e)
-        elif mode == "pronunciation":
+        elif mode == "read":
             l = min(len(english_split),len(foreign_split))
             buffer = abs(len(english_split) - len(foreign_split)) + 1
             for i in range(l):
                 e = english_split[i]
                 for j in range(max(0,i),min(len(foreign_split),i+buffer)):
-                    f = foreign_split[j]
-                    pair[(e,f)] += 1.
+                    for k in range(min(length+1, len(foreign_split)-j)):
+                        f = " ".join(foreign_split[j:j+k])
+                        pair[(e,f)] += 1.
                 vocabulary.add(e)
                
     return em_algorithm(pair, number, len(vocabulary))
