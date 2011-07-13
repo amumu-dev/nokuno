@@ -12,6 +12,7 @@ parser.add_option("-l", dest="list")
 parser.add_option("-u", dest="user")
 parser.add_option("-m", dest="mention", action="store_true")
 parser.add_option("-t", dest="tweet")
+parser.add_option("-s", dest="search")
 parser.add_option("-f", dest="file", default=expanduser("~/.settings/twitter.conf"))
 (o, a) = parser.parse_args()
 
@@ -39,10 +40,15 @@ elif o.user != None:
     timeline = api.user_timeline(o.user, per_page=o.count, page=o.page)
 elif o.mention == True:
     timeline = api.mentions(count=o.count, page=o.page)
+elif o.search != None:
+    timeline = api.search(q=o.search, page=o.page, show_user=True)
 else:
     timeline = api.home_timeline(count=o.count, page=o.page)
     
 #display tweets
 for tweet in timeline:
-    print tweet.user.screen_name, ":", tweet.text, "at", tweet.created_at
+    if o.search != None:
+        print tweet.text, tweet.created_at
+    else:
+        print tweet.user.screen_name, ":", tweet.text, "at", tweet.created_at
 
