@@ -1,7 +1,8 @@
-#!/usr/bin/python
-import sys
+#!/usr/bin/env python
+from sys import stdin
 
-for line in sys.stdin:
-  words = line.strip().split()
-  for word in words:
-    print '%s\t%s' % (word, 1)
+if __name__ == "__main__":
+    for line in stdin:
+        words = line.strip().split()
+        for word in words:
+            print '%s\t%d' % (word, 1)
