@@ -26,45 +26,56 @@ def sign(x):
         return 1
     return -1
 
+def dot(x, y):
+    return sum(x.get(i, 0.) * y[i] for i in y.keys())
+
+def norm(x):
+    return dot(x, x)
+
 class Perceptron:
     def __init__(self):
         self.weight = {}
         self.weight_all = {}
 
     def train(self, documents, mode, iteration, eta, gamma, regularize, c):
+        for label, features in documents:
+            if not label in self.weight:
+                self.weight[label] = defaultdict(float)
+        t = 1.
         for i in range(iteration):
             shuffle(documents)
             for label, features in documents:
-                if not label in self.weight:
-                    self.weight[label] = defaultdict(float)
-
                 # prediction
                 prediction, scores = self.predict(features)
 
                 # update
                 if prediction != label or scores[prediction] < gamma:
-                    if mode == "pa":
+                    if mode == "basic":
+                        learn = 1. / (t * eta + 1.)
+                    elif mode == "pegasos":
+                        learn = 1. / (t * eta)
+                    elif mode == "constant":
+                        learn = eta
+                    elif mode.startswith("pa"):
                         loss = max(0, 1. + scores[prediction] - scores[label])
-                        eta = loss / sum(value * value for value in features.values())
-                    elif mode == "pa1":
-                        loss = max(0, 1. + scores[prediction] - scores[label])
-                        eta = min(c, loss / (sum(value * value for value in features.values()) + 1. / (2. * c)))
-                    elif mode == "pa2":
-                        loss = max(0, 1. + scores[prediction] - scores[label])
-                        eta = loss / (sum(value * value for value in features.values()) + 1. / (2. * c))
+                        if mode == "pa":
+                            learn = loss / norm(features)
+                        elif mode == "pa1":
+                            learn = min(c, loss / (norm(featues) + 1. / (2. * c)))
+                        elif mode == "pa2":
+                            learn = loss / (norm(features) + 1. / (2. * c))
                     for key, value in features.items(): 
-                        self.weight[label][key] += eta * value
-                        self.weight[prediction][key] -= eta * value
+                        self.weight[label][key] += learn * value
+                        self.weight[prediction][key] -= learn * value
 
                 # regularize 
-                if regularize == "l2":
-                    for l in self.weight.keys():
-                        for key, value in features.items(): 
+                for l in self.weight.keys():
+                    for key, value in features.items(): 
+                        if regularize == "l2":
                             self.weight[l][key] -= c * self.weight[l][key]
-                elif regularize == "l1":
-                    for l in self.weight.keys():
-                        for key, value in features.items(): 
+                        elif regularize == "l1":
                             self.weight[l][key] = sign(self.weight[l][key]) * max(0., abs(self.weight[l][key]) - c)
+                t += 1.
 
     def train_average(self, documents, iteration, eta, gamma):
         t = 1
@@ -97,7 +108,7 @@ class Perceptron:
         max_label = None
         scores = {}
         for label, weight in self.weight.items():
-            scores[label] = sum(weight[key] * feature[key] for key in feature.keys())
+            scores[label] = dot(weight, feature)
             if max_label == None or scores[label] > scores[max_label]:
                 max_label = label
         return (max_label, scores)
@@ -106,14 +117,14 @@ if __name__ == '__main__':
     parser = OptionParser()
 
     # General arguments
-    parser.add_option("-m", dest="mode", default="perceptron")
+    parser.add_option("-m", dest="mode", default="basic")
     parser.add_option("-t", dest="test", type="float", default=0.1)
     parser.add_option("-s", dest="seed", type="int", default=0)
 
     # Training parameters
     parser.add_option("-i", dest="iteration", type="int", default=10)
     parser.add_option("-b", dest="bias", type="float", default=1.)
-    parser.add_option("-e", dest="eta", type="float", default=0.1)
+    parser.add_option("-e", dest="eta", type="float", default=0.0001)
     parser.add_option("-g", dest="gamma", type="float", default=0.)
     parser.add_option("-r", dest="regularize", default="l2")
     parser.add_option("-c", dest="c", type="float", default=0.001)
