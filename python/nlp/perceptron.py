@@ -4,80 +4,146 @@
 from sys import stdin
 from optparse import OptionParser
 from collections import defaultdict
+from random import shuffle, seed
 
-def parse(text, bias):
-    splited = text.strip().split(" ", 1)
-    if splited == None or len(splited) != 2:
-        return None
-    label = splited[0]
+def parse(line, bias):
+    label, document = line.strip().split(" ", 1)
 
     features = {}
-    for feature in splited[1].split(" "):
-        pair = feature.split(":", 1)
-        if pair == None or len(pair) != 2:
-            continue
-        features[pair[0]] = float(pair[1])
-    if bias:
-        features[-1] = 1.
+    for feature in document.split(" "):
+        key, value = feature.split(":", 1)
+        features[key] = float(value)
+
+    if bias != 0.:
+        features[-1] = bias
 
     return (label, features)
+
+def sign(x):
+    if abs(x) < 1e-10:
+        return 0
+    elif x > 0:
+        return 1
+    return -1
 
 class Perceptron:
     def __init__(self):
         self.weight = {}
+        self.weight_all = {}
 
-    def train(self, documents, iteration, eta):
+    def train(self, documents, mode, iteration, eta, gamma, regularize, c):
         for i in range(iteration):
+            shuffle(documents)
             for label, features in documents:
                 if not label in self.weight:
                     self.weight[label] = defaultdict(float)
 
-                prediction = self.predict(features)
-                if prediction != label:
+                # prediction
+                prediction, scores = self.predict(features)
+
+                # update
+                if prediction != label or scores[prediction] < gamma:
+                    if mode == "pa":
+                        loss = max(0, 1. + scores[prediction] - scores[label])
+                        eta = loss / sum(value * value for value in features.values())
+                    elif mode == "pa1":
+                        loss = max(0, 1. + scores[prediction] - scores[label])
+                        eta = min(c, loss / (sum(value * value for value in features.values()) + 1. / (2. * c)))
+                    elif mode == "pa2":
+                        loss = max(0, 1. + scores[prediction] - scores[label])
+                        eta = loss / (sum(value * value for value in features.values()) + 1. / (2. * c))
                     for key, value in features.items(): 
                         self.weight[label][key] += eta * value
-                    for label in self.weight.keys():
+                        self.weight[prediction][key] -= eta * value
+
+                # regularize 
+                if regularize == "l2":
+                    for l in self.weight.keys():
                         for key, value in features.items(): 
-                            self.weight[label][key] -= eta * value
+                            self.weight[l][key] -= c * self.weight[l][key]
+                elif regularize == "l1":
+                    for l in self.weight.keys():
+                        for key, value in features.items(): 
+                            self.weight[l][key] = sign(self.weight[l][key]) * max(0., abs(self.weight[l][key]) - c)
+
+    def train_average(self, documents, iteration, eta, gamma):
+        t = 1
+        for i in range(iteration):
+            shuffle(documents)
+            for label, features in documents:
+                if not label in self.weight:
+                    self.weight[label] = defaultdict(float)
+                    self.weight_all[label] = defaultdict(float)
+
+                # prediction
+                prediction, scores = self.predict(features)
+
+                # update
+                if prediction != label or  scores[prediction] < gamma:
+                    for key, value in features.items(): 
+                        self.weight[label][key] += eta * value
+                        self.weight_all[label][key] += t * eta * value
+                        self.weight[prediction][key] -= eta * value
+                        self.weight_all[prediction][key] -= t * eta * value
+                    t += 1
+
+        # average
+        for label, weight in self.weight.items():
+            for key in weight.keys():
+                weight[key] -= self.weight_all[label][key] / t
+
 
     def predict(self, feature):
         max_label = None
-        max_output = 0.
+        scores = {}
         for label, weight in self.weight.items():
-            output = sum(weight[key] * feature[key] for key in feature.keys())
-            if max_label == None or output > max_output:
+            scores[label] = sum(weight[key] * feature[key] for key in feature.keys())
+            if max_label == None or scores[label] > scores[max_label]:
                 max_label = label
-                max_output = output
-        return max_label
+        return (max_label, scores)
 
 if __name__ == '__main__':
-    # Parse options
     parser = OptionParser()
-    parser.add_option("-1", dest="train", default="train.txt")
-    parser.add_option("-2", dest="test", default="test.txt")
+
+    # General arguments
+    parser.add_option("-m", dest="mode", default="perceptron")
+    parser.add_option("-t", dest="test", type="float", default=0.1)
+    parser.add_option("-s", dest="seed", type="int", default=0)
+
+    # Training parameters
     parser.add_option("-i", dest="iteration", type="int", default=10)
+    parser.add_option("-b", dest="bias", type="float", default=1.)
     parser.add_option("-e", dest="eta", type="float", default=0.1)
-    parser.add_option("-r", dest="rate", type="float", default=0.1)
-    parser.add_option("-b", dest="bias", action="store_true")
+    parser.add_option("-g", dest="gamma", type="float", default=0.)
+    parser.add_option("-r", dest="regularize", default="l2")
+    parser.add_option("-c", dest="c", type="float", default=0.001)
+
     (options, args) = parser.parse_args()
+    seed(options.seed)
     
     # Load file
     documents = []
     for line in stdin:
-        document = parse(line, options.bias)
-        if document != None and len(document) == 2:
-            documents.append(document)
+        documents.append(parse(line, options.bias))
 
     perceptron = Perceptron()
 
-    # Split data into train and test data
-    index = int(len(documents) * options.rate)
-    perceptron.train(documents[index:], options.iteration, options.eta)
+    # Split documents into train and test data
+    index = int(len(documents) * options.test)
 
+    # Train perceptron
+    if options.mode == "average":
+        perceptron.train_average(documents[index:], options.iteration, options.eta, options.gamma)
+    else:
+        perceptron.train(documents[index:], options.mode, options.iteration, options.eta, options.gamma, options.regularize, options.c)
+
+    # Test prediction
     correct = 0.
-    for document in documents[:index]:
-        prediction = perceptron.predict(document[1])
-        if prediction == document[0]:
+    for label, featues in documents[:index]:
+        prediction, scores = perceptron.predict(featues)
+        if prediction == label:
             correct += 1.
+    
+    # Output accuracy
     print correct / index
 
