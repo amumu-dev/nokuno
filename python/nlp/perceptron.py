@@ -27,7 +27,7 @@ def sign(x):
     return -1
 
 def dot(x, y):
-    return sum(x.get(i, 0.) * y[i] for i in y.keys())
+    return sum(x.get(i, 0.) * y[i] for i in y.iterkeys())
 
 def norm(x):
     return dot(x, x)
@@ -64,34 +64,35 @@ class Perceptron:
                             learn = min(c, loss / (norm(featues) + 1. / (2. * c)))
                         elif mode == "pa2":
                             learn = loss / (norm(features) + 1. / (2. * c))
-                    for key, value in features.items(): 
+                    for key, value in features.iteritems(): 
                         self.weight[label][key] += learn * value
                         self.weight[prediction][key] -= learn * value
 
                 # regularize 
-                for l in self.weight.keys():
-                    for key, value in features.items(): 
+                for weight in self.weight.itervalues():
+                    for key, value in weight.iteritems(): 
                         if regularize == "l2":
-                            self.weight[l][key] -= c * self.weight[l][key]
+                            weight[key] -= c * value
                         elif regularize == "l1":
-                            self.weight[l][key] = sign(self.weight[l][key]) * max(0., abs(self.weight[l][key]) - c)
+                            weight[key] = sign(value) * max(0., abs(value) - c)
                 t += 1.
 
     def train_average(self, documents, iteration, eta, gamma):
+        for label, features in documents:
+            if not label in self.weight:
+                self.weight[label] = defaultdict(float)
+                self.weight_all[label] = defaultdict(float)
         t = 1
         for i in range(iteration):
             shuffle(documents)
             for label, features in documents:
-                if not label in self.weight:
-                    self.weight[label] = defaultdict(float)
-                    self.weight_all[label] = defaultdict(float)
 
                 # prediction
                 prediction, scores = self.predict(features)
 
                 # update
                 if prediction != label or  scores[prediction] < gamma:
-                    for key, value in features.items(): 
+                    for key, value in features.iteritems(): 
                         self.weight[label][key] += eta * value
                         self.weight_all[label][key] += t * eta * value
                         self.weight[prediction][key] -= eta * value
@@ -99,15 +100,15 @@ class Perceptron:
                     t += 1
 
         # average
-        for label, weight in self.weight.items():
-            for key in weight.keys():
+        for label, weight in self.weight.iteritems():
+            for key in weight.iterkeys():
                 weight[key] -= self.weight_all[label][key] / t
 
 
     def predict(self, feature):
         max_label = None
         scores = {}
-        for label, weight in self.weight.items():
+        for label, weight in self.weight.iteritems():
             scores[label] = dot(weight, feature)
             if max_label == None or scores[label] > scores[max_label]:
                 max_label = label
@@ -118,6 +119,7 @@ if __name__ == '__main__':
 
     # General arguments
     parser.add_option("-m", dest="mode", default="basic")
+    parser.add_option("-r", dest="regularize", default="l2")
     parser.add_option("-t", dest="test", type="float", default=0.1)
     parser.add_option("-s", dest="seed", type="int", default=0)
 
@@ -126,7 +128,6 @@ if __name__ == '__main__':
     parser.add_option("-b", dest="bias", type="float", default=1.)
     parser.add_option("-e", dest="eta", type="float", default=0.0001)
     parser.add_option("-g", dest="gamma", type="float", default=0.)
-    parser.add_option("-r", dest="regularize", default="l2")
     parser.add_option("-c", dest="c", type="float", default=0.001)
 
     (options, args) = parser.parse_args()
