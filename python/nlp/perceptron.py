@@ -70,11 +70,13 @@ class Perceptron:
 
                 # regularize 
                 for weight in self.weight.itervalues():
-                    for key, value in weight.iteritems(): 
+                    for key, value in weight.items(): 
                         if regularize == "l2":
                             weight[key] -= c * value
                         elif regularize == "l1":
                             weight[key] = sign(value) * max(0., abs(value) - c)
+                        if abs(value) < 1e-10:
+                            weight.pop(key)
                 t += 1.
 
     def train_average(self, documents, iteration, eta, gamma):
