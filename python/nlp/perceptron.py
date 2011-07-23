@@ -6,25 +6,29 @@ from optparse import OptionParser
 from collections import defaultdict
 from random import shuffle, seed
 
-def parse(line, bias):
-    label, document = line.strip().split(" ", 1)
-
-    features = {}
-    for feature in document.split(" "):
-        key, value = feature.split(":", 1)
-        features[key] = float(value)
-
-    if bias != 0.:
-        features[-1] = bias
-
-    return (label, features)
-
 def sign(x):
     if abs(x) < 1e-10:
         return 0
     elif x > 0:
         return 1
     return -1
+
+def clip(x, c):
+    return sign(x) * max(0., abs(x) - c)
+
+def parse(line, bias, discount):
+    label, document = line.strip().split(" ", 1)
+
+    features = {}
+    for feature in document.split(" "):
+        key, value = feature.split(":", 1)
+        features[key] = clip(float(value), discount)
+
+    if bias != 0.:
+        features[-1] = bias
+
+    return (label, features)
+
 
 def dot(x, y):
     return sum(x.get(i, 0.) * y[i] for i in y.iterkeys())
@@ -61,7 +65,7 @@ class Perceptron:
                         if mode == "pa":
                             learn = loss / norm(features)
                         elif mode == "pa1":
-                            learn = min(c, loss / (norm(featues) + 1. / (2. * c)))
+                            learn = min(c, loss / (norm(features) + 1. / (2. * c)))
                         elif mode == "pa2":
                             learn = loss / (norm(features) + 1. / (2. * c))
                     for key, value in features.iteritems(): 
@@ -70,13 +74,32 @@ class Perceptron:
 
                 # regularize 
                 for weight in self.weight.itervalues():
-                    for key, value in weight.items(): 
-                        if regularize == "l2":
-                            weight[key] -= c * value
-                        elif regularize == "l1":
-                            weight[key] = sign(value) * max(0., abs(value) - c)
-                        if abs(value) < 1e-10:
-                            weight.pop(key)
+                    if regularize.startswith("l"):
+                        for key in weight.keys(): 
+                            if regularize == "l2":
+                                weight[key] -= c * weight[key]
+                            elif regularize == "l1":
+                                weight[key] = sign(weight[key]) * max(0., abs(weight[key]) - c)
+                            if abs(value) < 1e-10:
+                                weight.pop(key)
+                    # Heuristic method for regularization. Only weights for input features are updated.
+                    elif regularize.startswith("h"):
+                        for key in features.iterkeys(): 
+                            if regularize == "h2":
+                                weight[key] -= c * weight[key]
+                            elif regularize == "h1":
+                                weight[key] = sign(weight[key]) * max(0., abs(weight[key]) - c)
+                            if abs(value) < 1e-10:
+                                weight.pop(key)
+                if regularize.startswith("r"):
+                    for weight in (self.weight[label], self.weight[prediction]):
+                        for key in features.iterkeys(): 
+                            if regularize == "r2":
+                                weight[key] -= c * weight[key]
+                            elif regularize == "r1":
+                                weight[key] = sign(weight[key]) * max(0., abs(weight[key]) - c)
+                            if abs(value) < 1e-10:
+                                weight.pop(key)
                 t += 1.
 
     def train_average(self, documents, iteration, eta, gamma):
@@ -130,7 +153,8 @@ if __name__ == '__main__':
     parser.add_option("-b", dest="bias", type="float", default=1.)
     parser.add_option("-e", dest="eta", type="float", default=0.0001)
     parser.add_option("-g", dest="gamma", type="float", default=0.)
-    parser.add_option("-c", dest="c", type="float", default=0.001)
+    parser.add_option("-c", dest="c", type="float", default=0.01)
+    parser.add_option("-d", dest="discount", type="float", default=0.)
 
     (options, args) = parser.parse_args()
     seed(options.seed)
@@ -138,7 +162,7 @@ if __name__ == '__main__':
     # Load file
     documents = []
     for line in stdin:
-        documents.append(parse(line, options.bias))
+        documents.append(parse(line, options.bias, options.discount))
 
     perceptron = Perceptron()
 
@@ -153,8 +177,8 @@ if __name__ == '__main__':
 
     # Test prediction
     correct = 0.
-    for label, featues in documents[:index]:
-        prediction, scores = perceptron.predict(featues)
+    for label, features in documents[:index]:
+        prediction, scores = perceptron.predict(features)
         if prediction == label:
             correct += 1.
     
