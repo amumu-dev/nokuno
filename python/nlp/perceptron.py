@@ -80,7 +80,7 @@ class Perceptron:
                                 weight[key] -= c * weight[key]
                             elif regularize == "l1":
                                 weight[key] = sign(weight[key]) * max(0., abs(weight[key]) - c)
-                            if abs(value) < 1e-10:
+                            if abs(weight[key]) < 1e-10:
                                 weight.pop(key)
                     # Heuristic method for regularization. Only weights for input features are updated.
                     elif regularize.startswith("h"):
@@ -89,7 +89,7 @@ class Perceptron:
                                 weight[key] -= c * weight[key]
                             elif regularize == "h1":
                                 weight[key] = sign(weight[key]) * max(0., abs(weight[key]) - c)
-                            if abs(value) < 1e-10:
+                            if abs(weight[key]) < 1e-10:
                                 weight.pop(key)
                 if regularize.startswith("r"):
                     for weight in (self.weight[label], self.weight[prediction]):
@@ -98,7 +98,7 @@ class Perceptron:
                                 weight[key] -= c * weight[key]
                             elif regularize == "r1":
                                 weight[key] = sign(weight[key]) * max(0., abs(weight[key]) - c)
-                            if abs(value) < 1e-10:
+                            if abs(weight[key]) < 1e-10:
                                 weight.pop(key)
                 t += 1.
 
