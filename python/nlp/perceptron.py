@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
     # General arguments
     parser.add_option("-m", dest="mode", default="basic")
-    parser.add_option("-r", dest="regularize", default="l2")
+    parser.add_option("-r", dest="regularize", default="h2")
     parser.add_option("-t", dest="test", type="float", default=0.1)
     parser.add_option("-s", dest="seed", type="int", default=0)
 
