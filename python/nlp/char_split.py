@@ -15,9 +15,7 @@ for line in sys.stdin:
     splited = line.strip().split("\t")
     if len(splited) < 5: continue
     (read, lid, rid, cost, word) = splited[:5]
-    read = read.decode('utf-8')
-    word = word.decode('utf-8')
-    read = u" ".join(read).encode('utf-8')
-    word = u" ".join(word).encode('utf-8')
-    file_read.write(read+"\n")
-    file_word.write(word+"\n")
+    read_u = u" ".join(read.decode('utf-8')).encode('utf-8')
+    word_u = u" ".join(word.decode('utf-8')).encode('utf-8')
+    file_read.write(read_u + "\n")
+    file_word.write(word_u + "\n")
