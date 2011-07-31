@@ -12,10 +12,9 @@ def right(i):
 def max_heapify(a, heap_size, i):
     l = left(i)
     r = right(i)
-    if l < heap_size and a[l] > a[i]:
+    largest = i
+    if l < heap_size and a[l] > a[largest]:
         largest = l
-    else:
-        largest = i
     if r < heap_size and a[r] > a[largest]:
         largest = r
     if largest != i:
@@ -25,10 +24,9 @@ def max_heapify(a, heap_size, i):
 def min_heapify(a, heap_size, i):
     l = left(i)
     r = right(i)
-    if l < heap_size and a[l] < a[i]:
+    smallest = i
+    if l < heap_size and a[l] < a[smallest]:
         smallest = l
-    else:
-        smallest = i
     if r < heap_size and a[r] < a[smallest]:
         smallest = r
     if smallest != i:
