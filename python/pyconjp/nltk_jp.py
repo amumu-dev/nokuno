@@ -15,9 +15,9 @@ from nltk.text import Text
 
 # NLTKで日本語の平文コーパスを読み込む
 # 単語区切りはひらがな，カタカナ，それ以外の文字種で区切る
+jp_sent_tokenizer = nltk.RegexpTokenizer(u'[^ 「」！？。]*[！？。]')
+jp_chartype_tokenizer = nltk.RegexpTokenizer(u'([ぁ-んー]+|[ァ-ン]+|[\u4e00-\u9FFF]+|[^ぁ-んァ-ン\u4e00-\u9FFF]+)')
 def JapaneseCorpusReader(root, fieldids, encoding='utf-8'):
-    jp_sent_tokenizer = nltk.RegexpTokenizer(u'[^ 「」！？。]*[！？。]')
-    jp_chartype_tokenizer = nltk.RegexpTokenizer(u'([ぁ-んー]+|[ァ-ン]+|[\u4e00-\u9FFF]+|[^ぁ-んァ-ン\u4e00-\u9FFF]+)')
     corpus = PlaintextCorpusReader(root, fieldids,
             encoding = encoding,
             para_block_reader = read_line_block,
