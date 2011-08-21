@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 #encoding: utf-8
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def format(x):
     if type(x) == list:
