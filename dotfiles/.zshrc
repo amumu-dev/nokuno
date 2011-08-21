@@ -59,6 +59,7 @@ setopt hist_save_no_dups
 path=($HOME/bin(N) $HOME/nokuno/python/*(N) $path)
 typeset -U path
 export JAVA_HOME=/usr/java/default/
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # SVN
 export SVN_SSH="ssh -1"
