@@ -22,9 +22,9 @@ class JPMeCabTokenizer(TokenizerI):
         result = self.mecab.parse(text.encode('utf-8'))
         return result.decode('utf-8').strip().split(' ')
 
-# コーパスの読み込み
+# 日本語コーパスの読み込み
 def JapaneseCorpusReader(root, fieldids, encoding='utf-8'):
-    jp_sent_tokenizer = RegexpTokenizer(u'[^ 「」！？。]*[！？。]')
+    jp_sent_tokenizer = RegexpTokenizer(u'[！？。]')
     corpus = PlaintextCorpusReader(root, fieldids,
             encoding = encoding,
             para_block_reader = read_line_block,
@@ -36,21 +36,18 @@ def JapaneseCorpusReader(root, fieldids, encoding='utf-8'):
 if __name__ == '__main__':
     init()
 
-    # コーパスの読み込み
+    # コーパスの読み込みと解析
     reader = JapaneseCorpusReader("data", "ginga.txt")
     text = Text(reader.words())
     freq = FreqDist(text)
 
-    # 単語カウント
-    print "Frequency: "
+    # 単語頻度の集計
     freq.tabulate(10)
 
-    # 共起語
-    print "Collocations: "
+    # 共起語の列挙
     text.collocations()
 
-    # 自動生成
-    print "Generate: "
+    # 文章の自動生成
     text.generate()
 
     # 検索
