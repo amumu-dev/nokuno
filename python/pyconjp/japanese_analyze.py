@@ -37,17 +37,20 @@ if __name__ == '__main__':
     init()
 
     # コーパスの読み込み
-    reader = JapaneseCorpusReader("data", "comike.txt")
+    reader = JapaneseCorpusReader("data", "ginga.txt")
     text = Text(reader.words())
+    freq = FreqDist(text)
 
     # 単語カウント
-    freq = FreqDist(text)
+    print "Frequency: "
     freq.tabulate(10)
 
     # 共起語
+    print "Collocations: "
     text.collocations()
 
     # 自動生成
+    print "Generate: "
     text.generate()
 
     # 検索
