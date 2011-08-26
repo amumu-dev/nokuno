@@ -11,14 +11,17 @@ class Dic:
         for line in open(filename):
             read, word = line.strip().split("\t")[:2]
             self.ht[read] += [word]
-    
+
+    def add(self, read, word):
+        self.ht[read] += [word]
+
     def lookup(self, string, maximum):
         result = defaultdict(list)
 
         for i in range(len(string)-1):
             for j in range(i+1, min(len(string)+1, i+maximum)):
                 read = string[i:j]
-                for word in dic.ht[read]:
+                for word in self.ht[read]:
                     node = Node(word, read, j)
                     result[j] += [node]
 
@@ -33,7 +36,7 @@ class Node:
         self.read = read
         self.endpos = endpos
         self.score = 0.0
-        self.prev = False
+        self.prev = None
 
     def is_bos(self):
         return self.endpos == 0
@@ -52,11 +55,11 @@ class Graph:
         self.nodes = dic.lookup(string, 16)
 
         # push BOS
-        bos = Node("BOS", "", 0)
+        bos = Node("", "", 0)
         self.nodes[0] = [bos]
 
         # push EOS
-        self.eos = Node("EOS", "", len(string)+1)
+        self.eos = Node("", "", len(string)+1)
         self.nodes[len(string)+1] = [self.eos]
 
 
@@ -81,7 +84,7 @@ class FeatureFuncs:
         self.node_features += [node_feature_surface]
 
         node_feature_surface_read = lambda node: "S" + node.word + "\tR" + node.read
-        self.node_features += [node_feature_surface]
+        self.node_features += [node_feature_surface_read]
 
         edge_feature_surface = lambda prev_node, node: "S" + prev_node.word + "\tS" + node.word
         self.edge_features += [edge_feature_surface]
@@ -123,42 +126,33 @@ class Decoder:
         result = []
         node = graph.eos.prev
 
-        while not node.is_bos():
+        while node and not node.is_bos():
             result += [(node.word, node.read)]
             node = node.prev
 
         result.reverse()
         return result
 
-if __name__ == '__main__':
-    parser = OptionParser()
-    parser.add_option("-d", dest="dictionary", default="test/dictionary.txt")
-    parser.add_option("-m", dest="model", default="test/model.txt")
-    (options, args) = parser.parse_args()
+def read_weight_map(filename, dic):
+    w = defaultdict(float)
 
-    print "loading.."
-
-    dic = Dic(options.dictionary)
-    feature_funcs = FeatureFuncs()
-    decoder = Decoder(feature_funcs)
-    w = defaultdict(lambda: 0.)
-
-    for line in open(options.model):
+    for line in open(filename):
         key, value = line.strip().split("\t\t")
         w[key] = float(value)
+        keys = key.split("\t")
+        if len(keys) == 2 and keys[0][0] == "S" and keys[1][0] == "R":
+            word = keys[0][1:]
+            read = keys[1][1:]
+            dic.add(read, word)
+    return w
 
-    if options.dictionary == "test/dictionary.txt":
-        graph = Graph(dic, "くるまでまつ")
-        result = decoder.viterbi(graph, w)
-        print graph.nodes
-        print " ".join(word[0] for word in result)
-        exit()
+if __name__ == '__main__':
+    dic = Dic("test/dictionary.txt")
+    feature_funcs = FeatureFuncs()
+    decoder = Decoder(feature_funcs)
+    w = read_weight_map("test/model.txt", dic)
 
-    print "input:"
-
-    while True:
-        string = raw_input()
-        graph = Graph(dic, string)
-        result = decoder.viterbi(graph, w)
-        print " ".join(word[0] for word in result)
-
+    graph = Graph(dic, "くるまでまつ")
+    result = decoder.viterbi(graph, w)
+    print graph.nodes
+    print " ".join(word[0] for word in result)
