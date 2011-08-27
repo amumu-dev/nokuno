@@ -4,6 +4,7 @@
 from collections import defaultdict
 from optparse import OptionParser
 from sys import stdin, exit
+from re import match
 
 class Dic:
     def __init__(self, filename):
@@ -81,12 +82,24 @@ class FeatureFuncs:
         self.node_features = []
         self.edge_features = []
 
+        # bias term
+        self.node_features += [lambda node: "BIAS"]
+
+        # hiragana term
+        self.node_features += [lambda node: "IS_HIRAGANA" if match("^[ぁ-ん]+$", node.word) else "NOT_HIRAGANA"]
+
+        # katakana term
+        self.node_features += [lambda node: "IS_KATAKANA" if match("^[ァ-ン]+$", node.word) else "NOT_KATAKANA"]
+
+        # surface
         node_feature_surface = lambda node: "S" + node.word
         self.node_features += [node_feature_surface]
 
+        # (surface, pronunciation)
         node_feature_surface_read = lambda node: "S" + node.word + "\tR" + node.read
         self.node_features += [node_feature_surface_read]
 
+        # (sufrace_left, surface_right)
         edge_feature_surface = lambda prev_node, node: "S" + prev_node.word + "\tS" + node.word
         self.edge_features += [edge_feature_surface]
 
