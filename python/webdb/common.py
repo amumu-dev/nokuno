@@ -13,7 +13,8 @@ class Dic:
             self.ht[read] += [word]
 
     def add(self, read, word):
-        self.ht[read] += [word]
+        if not word in self.ht[read]:
+            self.ht[read] += [word]
 
     def lookup(self, string, maximum):
         result = defaultdict(list)
