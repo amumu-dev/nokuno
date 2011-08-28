@@ -11,7 +11,7 @@ class Dic:
         self.ht = defaultdict(list)
         for line in open(filename):
             read, word = line.strip().split("\t")[:2]
-            self.ht[read] += [word]
+            self.add(read, word)
 
     def add(self, read, word):
         if not word in self.ht[read]:
@@ -166,12 +166,13 @@ def read_weight_map(filename, dic):
     return w
 
 if __name__ == '__main__':
-    dic = Dic("test/dictionary.txt")
+    dic = Dic("test-data/dictionary.txt")
     feature_funcs = FeatureFuncs()
     decoder = Decoder(feature_funcs)
-    w = read_weight_map("test/model.txt", dic)
+    w = read_weight_map("test-data/model.txt", dic)
 
     graph = Graph(dic, "くるまでまつ")
     result = decoder.viterbi(graph, w)
     print graph.nodes
     print " ".join(word[0] for word in result)
+
