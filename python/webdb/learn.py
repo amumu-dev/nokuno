@@ -100,9 +100,9 @@ if __name__ == '__main__':
 
     for i in range(options.iteration_num):
         for line in corpus_lines:
-            if options.verbose_mode:
-                print "gold: ", line,
             sentence = [word.split("/") for word in line.strip().split(" ") if len(word.split("/")) == 2]
+            if options.verbose_mode:
+                print "gold: ", " ".join(word[0] for word in sentence)
             learner.learn(sentence)
 
     learner.save(options.model_filename)

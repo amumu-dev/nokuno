@@ -106,7 +106,7 @@ class FeatureFuncs:
 
         # katakana term
         self.node_features += [lambda node: "IS_KATAKANA" if match("^[ァ-ン]+$", node.word) else "NOT_KATAKANA"]
-        """
+"""
 
 class Decoder:
     def __init__(self, feature_funcs):
