@@ -82,15 +82,6 @@ class FeatureFuncs:
         self.node_features = []
         self.edge_features = []
 
-        # bias term
-        self.node_features += [lambda node: "BIAS"]
-
-        # hiragana term
-        self.node_features += [lambda node: "IS_HIRAGANA" if match("^[ぁ-ん]+$", node.word) else "NOT_HIRAGANA"]
-
-        # katakana term
-        self.node_features += [lambda node: "IS_KATAKANA" if match("^[ァ-ン]+$", node.word) else "NOT_KATAKANA"]
-
         # surface
         node_feature_surface = lambda node: "S" + node.word
         self.node_features += [node_feature_surface]
@@ -102,6 +93,20 @@ class FeatureFuncs:
         # (sufrace_left, surface_right)
         edge_feature_surface = lambda prev_node, node: "S" + prev_node.word + "\tS" + node.word
         self.edge_features += [edge_feature_surface]
+
+"""
+        # bias term
+        self.node_features += [lambda node: "BIAS"]
+
+        # length term
+        self.node_features += [lambda node: "LENGTH_" + str(len(node.read))]
+
+        # hiragana term
+        self.node_features += [lambda node: "IS_HIRAGANA" if match("^[ぁ-ん]+$", node.word) else "NOT_HIRAGANA"]
+
+        # katakana term
+        self.node_features += [lambda node: "IS_KATAKANA" if match("^[ァ-ン]+$", node.word) else "NOT_KATAKANA"]
+        """
 
 class Decoder:
     def __init__(self, feature_funcs):
