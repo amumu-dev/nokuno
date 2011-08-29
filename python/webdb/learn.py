@@ -76,8 +76,8 @@ class Learner:
 
 if __name__ == '__main__':
     opt = OptionParser()
-    opt.add_option("-m", "--model", dest="model_filename", default="mk.model")
-    opt.add_option("-d", "--dic", dest="dic_filename", default="juman.dic")
+    opt.add_option("-m", "--model", dest="model_filename", default="data/mk.model")
+    opt.add_option("-d", "--dic", dest="dic_filename", default="data/juman.dic")
     opt.add_option("-l", "--learner", dest="learner_type", default="sperceptron")
     opt.add_option("-i", "--iteration", dest="iteration_num", type="int", default=1)
     opt.add_option("-v", "--verbose", dest="verbose_mode", action="store_true") 

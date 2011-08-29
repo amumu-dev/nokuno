@@ -5,8 +5,8 @@ if __name__ == '__main__':
     from common import *
 
     parser = OptionParser()
-    parser.add_option("-d", dest="dictionary", default="juman.dic")
-    parser.add_option("-m", dest="model", default="mk.model")
+    parser.add_option("-d", dest="dictionary", default="data/juman.dic")
+    parser.add_option("-m", dest="model", default="data/mk.model")
     (options, args) = parser.parse_args()
 
     print "loading.."
