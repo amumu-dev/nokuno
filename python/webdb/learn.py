@@ -12,7 +12,7 @@ class Learner:
         self.decoder = Decoder(feature_funcs)
         self.feature_funcs = feature_funcs
         self.verbose_mode = verbose_mode
-        self.learning_rate = 1
+        self.learning_rate = 0.1
 
     def learn(self, sentence):
         str = "".join(word[1] for word in sentence)
