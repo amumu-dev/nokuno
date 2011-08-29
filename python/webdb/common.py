@@ -23,14 +23,14 @@ class Dic:
         for i in range(len(string)-1):
             for j in range(i+1, min(len(string)+1, i+maximum)):
                 read = string[i:j]
-                for word in self.ht[read]:
+                for word in self.find(read):
                     node = Node(word, read, j)
                     result[j] += [node]
 
         return result
 
-    def find(string):
-        return self.ht[string]
+    def find(self, string):
+        return self.ht.get(string, [])
 
 class Node:
     def __init__(self, word, read, endpos):
