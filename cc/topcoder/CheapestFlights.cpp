@@ -42,7 +42,6 @@ public:
       double cost = price + solve(copy, i, endLocation, num-1);
       result = min(result, cost);
     }
-zsh:1: command not found: :make
     return result;
  }
   double getLowest(vector <string> prices, int startLocation, int endLocation, int num) {
