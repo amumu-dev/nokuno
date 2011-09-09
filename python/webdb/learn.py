@@ -12,7 +12,7 @@ class Learner:
         self.decoder = Decoder(feature_funcs)
         self.feature_funcs = feature_funcs
         self.verbose_mode = verbose_mode
-        self.learning_rate = 0.1
+        self.learning_rate = 1
 
     def learn(self, sentence):
         str = "".join(word[1] for word in sentence)
@@ -23,28 +23,33 @@ class Learner:
         if self.verbose_mode:
             print "result: ", " ".join(word[0] for word in result)
 
+    def get_pos(self, read):
+        word = self.dic.find(read)
+        if len(word) > 0 and len(word[0]) == 2:
+            return word[0][1]
+        return "UNK"
+
     def convert_to_nodes(self, sentence):
         ret = []
-        bos = Node("", "", 0)
+        bos = Node("", "", "BOS", 0)
         ret += [bos]
         i = 0
         prev = bos
 
         for x in sentence:
             i += len(x[1])
-            node = Node(x[0], x[1], i)
+            node = Node(x[0], x[1], self.get_pos(x[1]), i)
             node.prev = prev
             ret += [node]
             prev = node
 
-        eos = Node("", "", i+1)
+        eos = Node("", "", "EOS", i+1)
         eos.prev = prev
         ret += [eos]
-
         return ret
 
     def update_node_score(self, node, diff):
-        self.dic.add(node.read, node.word)
+        self.dic.add(node.read, node.word, self.get_pos(node.read))
         for func in self.feature_funcs.node_features:
             feature = func(node)
             self.w[feature] += diff
@@ -81,12 +86,13 @@ if __name__ == '__main__':
     opt.add_option("-l", "--learner", dest="learner_type", default="sperceptron")
     opt.add_option("-i", "--iteration", dest="iteration_num", type="int", default=1)
     opt.add_option("-v", "--verbose", dest="verbose_mode", action="store_true") 
+    opt.add_option("-e", dest="extend", action="store_true") 
     (options, args) = opt.parse_args()
 
     print "loading.."
 
     dic = Dic(options.dic_filename)
-    feature_funcs = FeatureFuncs()
+    feature_funcs = FeatureFuncs(options.extend)
     learner = Learner(dic, feature_funcs, options.verbose_mode)
 
     if len(args) == 0: 
