@@ -17,15 +17,24 @@ else
     set statusline=%<%f\ %m\ %r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=\ (%v,%l)/%L%8P
 endif
 
-"display tab and zenkaku space
-set list
-set listchars=tab:>-
-highlight JpSpace cterm=underline ctermfg=blue   "display JpSpace blue underline
-au BufRead,BufNew * match JpSpace /　/
-
 " syntax color
 syntax on
-set t_Co=256
+
+" custom colors
+highlight Constant ctermfg=LightRed
+highlight Comment ctermfg=LightCyan
+highlight Statement ctermfg=LightBlue
+highlight PreProc ctermfg=LightCyan
+highlight Type ctermfg=LightGreen
+highlight Special ctermfg=Magenta
+highlight SpecialKey ctermfg=DarkGray
+highlight LineNr ctermfg=DarkGray
+
+"display tab and zenkaku space
+set list
+set listchars=tab:>-,trail:-
+highlight JpSpace cterm=underline ctermfg=blue   "display JpSpace blue underline
+au BufRead,BufNew * match JpSpace /　/
 
 " statusline
 highlight LineNr ctermfg=darkgrey
