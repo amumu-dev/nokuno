@@ -5,7 +5,7 @@ from heapq import *
 def evaluate(b, c, w, h):
     result = 0
     for i in range(len(b)):
-        if b[i] != "=":
+        if b[i] != "=" and b[i] != "0":
             j = c.find(b[i])
             result +=  abs(i % w - j % w) + abs(i / w - j / w)
     return result
