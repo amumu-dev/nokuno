@@ -32,7 +32,7 @@ def correct(board):
         for j in range(len(result[0])):
             if result[i][j] != None:
                 result[i][j] = num
-                num += 1
+            num += 1
     result[-1][-1] = 0
     return result
 
