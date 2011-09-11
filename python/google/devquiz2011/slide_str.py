@@ -77,9 +77,9 @@ if __name__ == "__main__":
             w, h = int(w), int(h)
 
             if w + h <= 6:
-                #sys.stderr.write("Number: %d" % (number))
                 c = correct(b)
 
+                #print "Input:"
                 #print show(b, w, h),
                 #print "Correct:"
                 #print show(c, w, h)

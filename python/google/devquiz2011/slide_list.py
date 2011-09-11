@@ -1,77 +1,59 @@
 #!/usr/bin/env python
 from copy import deepcopy
 
-def cached_brute_force(input):
+def update(queue, board, w, h, i1, j1, i2, j2, path, type):
+    if i2 < 0 or i2 > h-1 or j2 < 0 or j2 > w-1:
+        return
+    if board[i2][j2] == "=":
+        return
+
+    next = deepcopy(board)
+    next[i1][j1], next[i2][j2] = next[i2][j2], next[i1][j1]
+    queue.append((next, path + type))
+
+def brute_force(b, c, w, h):
     cache = set()
 
-    queue = [(input, "")]
-    while len(queue) > 0:
+    queue = [(b, "")]
+
+    for loop in range(10000000):
+        if len(queue) == 0:
+            break
+
         board, path = queue.pop(0)
-        if board == correct(input):
+
+        if board == c:
             return path
+
         t = tuple(tuple(b) for b in board)
         if t in cache:
             continue
         cache.add(t)
-        i, j = search(board)
-        if i > 0 and board[i-1][j] != -1:
-            copy = deepcopy(board)
-            copy[i][j], copy[i-1][j] = copy[i-1][j], copy[i][j]
-            queue.append((copy, path + "U"))
-        if i < len(input) - 1 and board[i+1][j] != -1:
-            copy = deepcopy(board)
-            copy[i][j], copy[i+1][j] = copy[i+1][j], copy[i][j]
-            queue.append((copy, path + "D"))
-        if j > 0 and board[i][j-1] != -1:
-            copy = deepcopy(board)
-            copy[i][j], copy[i][j-1] = copy[i][j-1], copy[i][j]
-            queue.append((copy, path + "L"))
-        if j < len(input[0]) - 1 and board[i][j+1] != -1:
-            copy = deepcopy(board)
-            copy[i][j], copy[i][j+1] = copy[i][j+1], copy[i][j]
-            queue.append((copy, path + "R"))
 
-def brute_force(input):
-    queue = [(input, "")]
-    while len(queue) > 0:
-        board, path = queue.pop(0)
-        if board == correct(input):
-            return path
-        i, j = search(board)
-        if i > 0 and board[i-1][j] != -1:
-            copy = deepcopy(board)
-            copy[i][j], copy[i-1][j] = copy[i-1][j], copy[i][j]
-            queue.append((copy, path + "U"))
-        if i < len(input) - 1 and board[i+1][j] != -1:
-            copy = deepcopy(board)
-            copy[i][j], copy[i+1][j] = copy[i+1][j], copy[i][j]
-            queue.append((copy, path + "D"))
-        if j > 0 and board[i][j-1] != -1:
-            copy = deepcopy(board)
-            copy[i][j], copy[i][j-1] = copy[i][j-1], copy[i][j]
-            queue.append((copy, path + "L"))
-        if j < len(input[0]) - 1 and board[i][j+1] != -1:
-            copy = deepcopy(board)
-            copy[i][j], copy[i][j+1] = copy[i][j+1], copy[i][j]
-            queue.append((copy, path + "R"))
+        i, j = search(board, w, h)
+        update(queue, board, w, h, i, j, i-1, j, path, "U")
+        update(queue, board, w, h, i, j, i+1, j, path, "D")
+        update(queue, board, w, h, i, j, i, j-1, path, "L")
+        update(queue, board, w, h, i, j, i, j+1, path, "R")
 
-def correct(board):
+    return ""
+
+def correct(board, w, h):
     result = deepcopy(board)
     num = 1
-    for i in range(len(result)):
-        for j in range(len(result[0])):
+    for i in range(w):
+        for j in range(h):
             if result[i][j] != -1:
                 result[i][j] = num
             num += 1
     result[-1][-1] = 0
     return result
 
-def search(board):
-    for i in range(len(board)):
-        for j in range(len(board[0])):
+def search(board, w, h):
+    for i in range(w):
+        for j in range(h):
             if board[i][j] == 0:
                 return (i,j)
-    return result
 
 def show(board):
     result = ""
@@ -101,17 +83,20 @@ if __name__ == "__main__":
 
         number = 0
         for line in fp:
-            print "Number:", number
             number += 1
             w, h, b = line.strip().split(",",2)
             w, h = int(w), int(h)
-            board = [[char2int(b[i*w+j]) for j in range(w)] for i in range(h)]
+            board = [[char2int(b[i*w+j]) for j in range(h)] for i in range(w)]
 
-            if w == 3 and h == 3:
-                print "Input:"
-                print show(board)
-                print "Start:", search(board)
-                print "Correct:"
-                print show(correct(board))
-                print "Solution:", cached_brute_force(board)
+            if w + h <= 6:
+                c = correct(board, w, h)
 
+                #print "Input:", number
+                #print show(board),
+                #print "Correct:"
+                #print show(c),
+
+                result = brute_force(board, c, w, h)
+                print result
+            else:
+                print
