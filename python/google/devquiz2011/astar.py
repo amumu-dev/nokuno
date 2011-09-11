@@ -5,8 +5,9 @@ from heapq import *
 def evaluate(b, c, w, h):
     result = 0
     for i in range(len(b)):
-        j = c.find(b[i])
-        result +=  abs(i % w - j % w) + abs(i / w - j / w)
+        if b[i] != "=":
+            j = c.find(b[i])
+            result +=  abs(i % w - j % w) + abs(i / w - j / w)
     return result
 
 def astar(b, c, w, h):
@@ -15,7 +16,7 @@ def astar(b, c, w, h):
     # breath first search with cache
     queue = [(evaluate(b, c, w, h), b, "")]
 
-    for loop in range(10000000):
+    for loop in range(10000):
         if len(queue) == 0:
             break
         cost, board, path = heappop(queue)
@@ -49,7 +50,8 @@ def update(queue, board, w, h, i1, j1, i2, j2, path, type, c):
     next = list(board)
     next[a], next[b] = next[b], next[a]
     n = "".join(next)
-    heappush(queue, (evaluate(n, c, w, h), n, path + type))
+    path += type
+    heappush(queue, (evaluate(n, c, w, h) + len(path), n, path))
 
 def correct(b):
     result = ""
