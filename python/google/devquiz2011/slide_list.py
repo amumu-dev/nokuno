@@ -31,16 +31,6 @@ def cached_brute_force(input):
             copy[i][j], copy[i][j+1] = copy[i][j+1], copy[i][j]
             queue.append((copy, path + "R"))
 
-def correct(board):
-    result = deepcopy(board)
-    num = 1
-    for i in range(len(result)):
-        for j in range(len(result[0])):
-            if result[i][j] != -1:
-                result[i][j] = num
-            num += 1
-    result[-1][-1] = 0
-    return result
 def brute_force(input):
     queue = [(input, "")]
     while len(queue) > 0:
