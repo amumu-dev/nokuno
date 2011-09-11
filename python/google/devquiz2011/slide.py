@@ -44,5 +44,6 @@ if __name__ == "__main__":
             board = [[char2int(b[i*w+j]) for j in range(w)] for i in range(h)]
             if w == 3 and h == 3:
                 print show(board)
+                print correct(board)
                 print brute_force(board)
 
