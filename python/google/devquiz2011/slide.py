@@ -7,8 +7,8 @@ def brute_force(board):
 def correct(board):
     result = deepcopy(board)
     num = 1
-    for i in len(result):
-        for j in len(result[0]):
+    for i in range(len(result)):
+        for j in range(len(result[0])):
             if result[i][j] != None:
                 result[i][j] = num
                 num += 1
@@ -22,7 +22,7 @@ def show(board):
 
 def char2int(c):
     if c == "=":
-        return -1
+        return None
     if ord(c) >= ord("0") and ord(c) <= ord("9"):
         return ord(c) - ord("0")
     return ord(c) - ord("A")
@@ -44,6 +44,6 @@ if __name__ == "__main__":
             board = [[char2int(b[i*w+j]) for j in range(w)] for i in range(h)]
             if w == 3 and h == 3:
                 print show(board)
-                print correct(board)
+                print show(correct(board))
                 print brute_force(board)
 
