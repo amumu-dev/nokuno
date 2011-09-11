@@ -25,7 +25,6 @@ def brute_force(input):
             copy[i][j], copy[i][j+1] = copy[i][j+1], copy[i][j]
             queue.append((copy, path + "R"))
 
-
 def correct(board):
     result = deepcopy(board)
     num = 1
@@ -42,6 +41,7 @@ def search(board):
         for j in range(len(board[0])):
             if board[i][j] == 0:
                 return (i,j)
+    return result
 
 def show(board):
     result = ""
@@ -81,4 +81,3 @@ if __name__ == "__main__":
                 print "Correct:"
                 print show(correct(board))
                 print "Solution:", brute_force(board)
-
