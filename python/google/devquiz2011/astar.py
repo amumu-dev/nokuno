@@ -10,13 +10,13 @@ def evaluate(b, c, w, h):
             result +=  abs(i % w - j % w) + abs(i / w - j / w)
     return result
 
-def astar(b, c, w, h):
+def astar(b, c, w, h, s, num):
     cache = {}
 
     # breath first search with cache
-    queue = [(evaluate(b, c, w, h), b, "")]
+    queue = [(s, b, "")]
 
-    for loop in range(10000):
+    for loop in range(num):
         if len(queue) == 0:
             break
         cost, board, path = heappop(queue)
@@ -73,12 +73,15 @@ def show(b, w, h):
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) < 2:
-        file = "data/problems.txt"
-    else:
-        file = sys.argv[1]
+    from optparse import OptionParser
 
-    with open(file) as fp:
+    opt = OptionParser()
+    opt.add_option("-t", dest="threshold", type="int", default=50)
+    opt.add_option("-f", dest="file", default="data/problems.txt")
+    opt.add_option("-n", dest="num", type="int", default=10000)
+    options, argv = opt.parse_args()
+
+    with open(options.file) as fp:
         lx, rx, ux, dx = [i for i in fp.readline().strip().split(" ", 3)]
         n = int(fp.readline())
 
@@ -88,15 +91,16 @@ if __name__ == "__main__":
             w, h, b = line.strip().split(",",2)
             w, h = int(w), int(h)
 
-            if w + h <= 8:
-                c = correct(b)
+            c = correct(b)
+            s = evaluate(b, c, w, h)
 
+            if s < options.threshold:
                 #print "Input:"
                 #print show(b, w, h),
                 #print "Correct:"
                 #print show(c, w, h)
 
-                result = astar(b, c, w, h)
+                result = astar(b, c, w, h, s, options.num)
                 print result
             else:
                 print
